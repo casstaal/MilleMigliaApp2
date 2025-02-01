@@ -2,6 +2,28 @@
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
+
+  modules: ["@vee-validate/nuxt", "@sidebase/nuxt-auth"],
+
+  runtimeConfig: {
+    authSecret: "",
+  },
+
+  auth: {
+    provider: { type: "authjs" },
+    globalAppMiddleware: false,
+  },
+
+  veeValidate: {
+    autoImports: true,
+    componentNames: {
+      Form: "VeeForm",
+      Field: "VeeField",
+      FieldArray: "VeeFieldArray",
+      ErrorMessage: "VeeErrorMessage",
+    },
+  },
+  
   app: {
     head: {
       link: [

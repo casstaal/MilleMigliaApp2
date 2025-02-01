@@ -1,6 +1,6 @@
 <template>
-    <div class="dropdown justify-content-right mt-3 mb-3">
-        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <div class="dropdown justify-content-right pt-3 pb-3">
+        <button class="btn dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
             Dropdown button
         </button>
         <ul class="dropdown-menu">
@@ -23,6 +23,11 @@
     .full-page {
         height: 100vh;
         width: 100%;
+    }
+
+    .dropdown-button {
+      background-color: #FF0000;
+      color: white;
     }
 </style>
 
