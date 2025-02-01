@@ -2,9 +2,9 @@
 import { object, string } from "zod";
 
 definePageMeta({
-  layout: false,
   auth: {
     unauthenticatedOnly: true,
+    navigateAuthenticatedTo: '/'
   },
 });
 
@@ -29,7 +29,8 @@ const { value: email } = useField("email");
 const { value: password } = useField("password");
 
 const onSubmit = handleSubmit(async (values) => {
-  const result: any = await signIn("credentials", { email: values.email, password: values.password, callbackUrl: callback, redirect: false });
+  const result: any = await signIn("credentials", { email: values.email, password: values.password, callbackUrl: '/', redirect: false });
+
   if (result.error) {
     switch (result.error) {
       case "CredentialsSignin":
@@ -38,7 +39,7 @@ const onSubmit = handleSubmit(async (values) => {
     }
     return;
   } else {
-    navigateTo(callback);
+    navigateTo('/');
   }
 });
 </script>

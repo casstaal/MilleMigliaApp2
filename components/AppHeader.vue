@@ -10,4 +10,11 @@
         background-color: #003366;
         color: white;
     }
+
+    @media screen and (max-width: 767px) {
+        img {
+            width: 125px;
+            height: auto;
+        }
+    }
 </style>
