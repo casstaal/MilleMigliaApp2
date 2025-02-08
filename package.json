@@ -10,10 +10,15 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.741.0",
+    "@fortawesome/fontawesome-svg-core": "^6.7.2",
+    "@fortawesome/free-solid-svg-icons": "^6.7.2",
+    "@fortawesome/vue-fontawesome": "^3.0.8",
     "@prisma/client": "^6.3.0",
     "@sidebase/nuxt-auth": "^0.10.0",
     "@vee-validate/nuxt": "^4.15.0",
     "@vee-validate/zod": "^4.15.0",
+    "aws-sdk": "^2.1692.0",
     "bcrypt": "^5.1.1",
     "next-auth": "4.21.1",
     "nuxt": "^3.15.4",

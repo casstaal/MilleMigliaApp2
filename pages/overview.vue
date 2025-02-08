@@ -1,3 +1,7 @@
+<script setup lang="ts">
+   
+</script>
+
 <template>
     <div class="dropdown justify-content-right pt-3 pb-3">
         <button class="btn dropdown-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -10,6 +14,11 @@
         </ul>
     </div>
     <div class="full-page">
+        <NuxtLink to="/addCheck">
+          <button class="fab">
+            <font-awesome-icon :icon="['fas', 'plus']" />        
+          </button>
+        </NuxtLink>
         <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6150123.595697122!2d7.432466654884098!3d41.178384507429136!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12d4fe82448dd203%3A0xe22cf55c24635e6f!2sItaly!5e0!3m2!1sen!2snl!4v1738335598322!5m2!1sen!2snl" width="100%" height="100%" style="border:0;" allowfullscreen="true" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
     </div>
 </template>
@@ -29,6 +38,27 @@
       background-color: #FF0000;
       color: white;
     }
+
+    .fab {
+    position: absolute;
+    top: 220px;
+    right: 20px;
+    background: #FF0000;
+    color: white;
+    border: none;
+    padding: 14px;
+    padding-right: 20px;
+    padding-left: 20px;
+    border-radius: 50%;
+    font-size: 30px;
+    cursor: pointer;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+  }
+  
+  .fab:hover {
+    background: #a51818;
+  }
 </style>
 
 <!-- <template>
