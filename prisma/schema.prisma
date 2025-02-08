@@ -20,6 +20,7 @@ model Check {
       id            String         @id @default(uuid())
       title         String
       imgUrl        String
-      location      String
+      latitude      Float
+      longitude     Float
       date          DateTime
 }

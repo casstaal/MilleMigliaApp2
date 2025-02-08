@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import { toTypedSchema } from "@vee-validate/zod";
-    import { object, string } from "zod";
+    import { object, string, z } from "zod";
     import type { FetchError } from "ofetch";
     import type { Check } from "@prisma/client";
     // import { S3Client } from "@aws-sdk/client-s3";
@@ -89,7 +89,6 @@
         object({
             title: string().min(1, { message: "Titel is verplicht"}),
             imgUrl: string().min(1, { message: "Afbeelding url is verplicht"}),
-            location: string().min(1, { message: "Locatie is verplicht"}),
             date: string({ required_error: "Datum is verplicht" }).date(),
         })
     );
@@ -100,7 +99,6 @@
 
     const { value: title } = useField("title");
     const { value: imgUrl } = useField("imgUrl");
-    const { value: location } = useField("location");
     const { value: date } = useField("date");
 
     // const fileInput = ref<HTMLInputElement | null>(null);
@@ -193,11 +191,6 @@
                     <label for="imgUrl" class="form-label">Afbeelding URL:</label>
                     <input class="form-control input-lg" :class="{ 'is-invalid': errors.imgUrl }" id="imgUrl" type="text" v-model="imgUrl" placeholder="Afbeelding URL" />
                     <div v-if="errors.imgUrl" class="invalid-feedback">{{ errors.imgUrl }}</div>
-                </div>
-                <div class="mt-3">
-                    <label for="location" class="form-label">Locatie:</label>
-                    <input class="form-control input-lg" :class="{ 'is-invalid': errors.location}" id="location" type="text" v-model="location" placeholder="Location" />
-                    <div v-if="errors.location" class="invalid-feedback">{{ errors.location }}</div>
                 </div>
                 <div class="mt-3">
                     <label for="date" class="form-label">Datum:</label>

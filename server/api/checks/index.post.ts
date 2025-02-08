@@ -1,12 +1,12 @@
 import { getServerSession } from "#auth";
 
 export default defineEventHandler(async (event) => {
-    const session = await getServerSession(event);
+    // const session = await getServerSession(event);
 
-    if(!session) {
-        sendError(event, createError({ statusMessage: "Unauthenticated", statusCode: 401}));
-        return;
-    }
+    // if(!session) {
+    //     sendError(event, createError({ statusMessage: "Unauthenticated", statusCode: 401}));
+    //     return;
+    // }
 
     const prisma = usePrisma();
     const body = await readBody(event);
@@ -15,7 +15,8 @@ export default defineEventHandler(async (event) => {
         data: {
             title: body.title,
             imgUrl: body.imgUrl,
-            location: body.location,
+            latitude: 45.4408,
+            longitude: 12.3155,
             date: body.date
         },
     });
