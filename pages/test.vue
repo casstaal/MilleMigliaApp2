@@ -19,22 +19,24 @@ onMounted(async () => {
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   }).addTo(map);
 
-//   var marker = L.marker([41.9028, 12.4964]).addTo(map);
-//   marker.bindPopup(
-//   "<b>Ferrari</b><br>" +
-//   "<img src='https://images.pexels.com/photos/2664399/pexels-photo-2664399.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' alt='Image' style='width:100px; height:auto;'><br>" +
-//   "<a href='/checks/73dfd6b6-e107-46e7-afb7-bdbcfd43d8fd'>Zie details</a>"
-// );
-
-  // Loop through each check and add a marker to the map
   checks.forEach((check) => {
     const marker = L.marker([check.latitude, check.longitude]).addTo(map);
     marker.bindPopup(
-      `<b>${check.id}</b><br>` +
+      `<b>${check.title}</b><br>` +
       `<img src='${check.imgUrl}' alt='Image' style='width:100px; height:auto;'><br>` +
       `<a href='/checks/${check.id}'>Zie details</a>`
     );
   });
+
+
+  function onMapClick(e: any) {
+    const lat = e.latlng.lat;
+    const lng = e.latlng.lng;
+
+    window.location.href = `addCheck?lat=${lat}&lng=${lng}`;
+  }
+
+  map.on('click', onMapClick);
 });
 </script>
 
@@ -45,6 +47,6 @@ onMounted(async () => {
 <style scoped>
 .map-container {
   width: 100%;
-  height: 900px; /* Adjust height as needed */
+  height: 900px; 
 }
 </style>

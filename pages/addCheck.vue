@@ -76,11 +76,15 @@
     // }
 
     const router = useRouter();
+    const route = useRoute();
 
 
     const goBack = () => {
         router.go(-1);
     }
+
+    const lat = typeof route.query.lat === 'string' ? route.query.lat : null;
+    const lng = typeof route.query.lng === 'string' ? route.query.lng : null;
 
     const errorMessage = ref("");
     const error = ref(false);
@@ -105,6 +109,8 @@
 
     async function createCheck(values: any) {
         values.date = new Date(values.date);
+        values.latitude = parseFloat(lat ?? "0");
+        values.longitude = parseFloat(lng ?? "0");
         const response = await $fetch<Check>("/api/checks", { method: "post", body: values }).catch((e: FetchError) => {
             errorMessage.value = e.data.message;
             error.value = true;
@@ -190,6 +196,16 @@
                 <div class="mt-3">
                     <label for="imgUrl" class="form-label">Afbeelding URL:</label>
                     <input class="form-control input-lg" :class="{ 'is-invalid': errors.imgUrl }" id="imgUrl" type="text" v-model="imgUrl" placeholder="Afbeelding URL" />
+                    <div v-if="errors.imgUrl" class="invalid-feedback">{{ errors.imgUrl }}</div>
+                </div>
+                <div class="mt-3">
+                    <label for="latitude" class="form-label">Latitude:</label>
+                    <input class="form-control input-lg" :class="{ 'is-invalid': errors.imgUrl }" id="latitude" type="number" :value="lat" disabled />
+                    <div v-if="errors.imgUrl" class="invalid-feedback">{{ errors.imgUrl }}</div>
+                </div>
+                <div class="mt-3">
+                    <label for="longitude" class="form-label">Longitude:</label>
+                    <input class="form-control input-lg" :class="{ 'is-invalid': errors.imgUrl }" id="longitude" type="number" :value="lng" disabled />
                     <div v-if="errors.imgUrl" class="invalid-feedback">{{ errors.imgUrl }}</div>
                 </div>
                 <div class="mt-3">

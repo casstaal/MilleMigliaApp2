@@ -15,8 +15,8 @@ export default defineEventHandler(async (event) => {
         data: {
             title: body.title,
             imgUrl: body.imgUrl,
-            latitude: 45.4408,
-            longitude: 12.3155,
+            latitude: body.latitude,
+            longitude: body.longitude,
             date: body.date
         },
     });
