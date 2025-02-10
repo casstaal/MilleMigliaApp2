@@ -2,7 +2,7 @@
     import { toTypedSchema } from "@vee-validate/zod";
     import { object, string, z } from "zod";
     import type { FetchError } from "ofetch";
-    import type { Check } from "@prisma/client";
+    import type { Marker } from "@prisma/client";
     // import { S3Client } from "@aws-sdk/client-s3";
     // import { CognitoIdentityClient } from "@aws-sdk/client-cognito-identity";
     // import { fromCognitoIdentityPool } from "@aws-sdk/credential-provider-cognito-identity";
@@ -111,7 +111,7 @@
         values.date = new Date(values.date);
         values.latitude = parseFloat(lat ?? "0");
         values.longitude = parseFloat(lng ?? "0");
-        const response = await $fetch<Check>("/api/checks", { method: "post", body: values }).catch((e: FetchError) => {
+        const response = await $fetch<Marker>("/api/markers", { method: "post", body: values }).catch((e: FetchError) => {
             errorMessage.value = e.data.message;
             error.value = true;
         });
@@ -183,10 +183,10 @@
 </script>
 
 <template>
-    <div class="addCheck-div d-md-flex justify-content-center align-items-center mt-5 mb-5">
+    <div class="addMarker-div d-md-flex justify-content-center align-items-center mt-5 mb-5">
         <button class="btn back-button mt-3" @click="goBack">Back</button>
-        <form @submit="onSubmit" class="addCheck-form col-sm-12 col-md-8 pe-0 ms-4 me-4 shadow rounded pt-1 pb-3">
-            <h4 class="text-center mt-2">Voeg check toe</h4>
+        <form @submit="onSubmit" class="addMarker-form col-sm-12 col-md-8 pe-0 ms-4 me-4 shadow rounded pt-1 pb-3">
+            <h4 class="text-center mt-2">Voeg marker toe</h4>
             <div class="ms-4 me-4">
                 <div class="mt-2">
                     <label for="title" class="form-label">Titel:</label>
@@ -225,7 +225,7 @@
         color: white;
     }
 
-    .addCheck-form {
+    .addMarker-form {
         background-color: #003366;
         color: white;
     }

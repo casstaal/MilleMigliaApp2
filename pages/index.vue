@@ -19,8 +19,9 @@
         <NuxtLink to="/overview" class="start-button btn btn-primary w-100 mt-4">Ga naar kaart</NuxtLink>
       </div>
 
-      <div v-else class="mb-3">
+      <div v-if="session?.user?.role === 'user'" class="mb-3">
         <NuxtLink to="/overview" class="start-button btn btn-primary w-100 mt-4">Ga naar kaart</NuxtLink>
+        <h1>test</h1>
       </div>
     </div>
   </div>
