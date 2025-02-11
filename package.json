@@ -21,6 +21,7 @@
     "@vue-leaflet/vue-leaflet": "^0.10.1",
     "aws-sdk": "^2.1692.0",
     "bcrypt": "^5.1.1",
+    "chart.js": "^4.4.7",
     "leaflet": "^1.9.4",
     "next-auth": "4.21.1",
     "nuxt": "^3.15.4",
