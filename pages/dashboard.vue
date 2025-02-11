@@ -4,16 +4,21 @@
     import type { User } from "@prisma/client";
     import type { Marker } from "@prisma/client";
     import { Chart, registerables  } from 'chart.js';
+    // import 'leaflet.markercluster';
+    // import { MarkerClusterGroup } from 'leaflet.markercluster';
 
     Chart.register(...registerables);
 
     const search = ref<string>("");
 
     const users = ref<User[] | null>(null);
+    const markers = ref<Marker[] | null>(null);
 
     const { data } = await useFetch<User[]>(`/api/users`);
+    const { data: markerData } = await useFetch<Marker[]>(`/api/markers`);
 
     users.value = data.value;
+    markers.value = markerData.value;
 
     const filteredUsers = computed(() => {
         return users.value?.filter((user: any) => {
@@ -21,6 +26,27 @@
             return user.name.toLowerCase().includes(query);
         })
     })
+
+    const markersByYear = computed(() => {
+        if (!markers.value) return {};
+
+        // Initialize an object to store the count per year
+        const yearCounts: Record<number, number> = {};
+
+        // Loop through each marker and extract the year
+        markers.value.forEach(marker => {
+            const year = new Date(marker.date).getFullYear(); // Get the year from the date
+
+            // Increment the count for that year
+            if (yearCounts[year]) {
+                yearCounts[year]++;
+            } else {
+                yearCounts[year] = 1;
+            }
+        });
+
+        return yearCounts; // Return the object containing the year counts
+    });
 
     const mapContainer = ref<HTMLElement | null>(null);
 
@@ -37,6 +63,15 @@
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
         }).addTo(map);
 
+        // const markers = L.markerClusterGroup();
+
+        // markers?.value?.forEach((markerFromMarkers: any) => {
+        //     // const marker = L.marker([markerFromMarkers.latitude, markerFromMarkers.longitude]).addTo(map);
+        //     const latLon = [markerFromMarkers.latitude, markerFromMarkers.longitude];
+        //     const leafletMarker = L.marker(latLon);
+        //     markers.addLayer(leafletMarker);  
+        // });
+
         var circle = L.circle([41.9028, 12.4964], {
             color: 'red',
             fillColor: '#f03',
@@ -44,16 +79,19 @@
             radius: 500
         }).addTo(map);
 
-        var xValues = ["2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025"];
-        var yValues = [55, 49, 44, 24, 15, 45, 13, 36, 27, 14, 6, 34, 12];
+        const chartData = markersByYear.value;
+
+        var years = Object.keys(chartData).map(year => parseInt(year)); // Get the years as an array
+        var markerCounts = years.map(year => chartData[year]); // Get the corresponding marker counts
 
         new Chart("myChart", {
             type: "bar",
             data: {
-                labels: xValues,
+                labels: years,
                 datasets: [{
-                backgroundColor: "red",
-                data: yValues
+                    label: 'Aantal markers',
+                    backgroundColor: "red",
+                    data: markerCounts
                 }]
             }
         });
@@ -61,10 +99,11 @@
         new Chart("myChart2", {
             type: "bar",
             data: {
-                labels: xValues,
+                labels: years,
                 datasets: [{
-                backgroundColor: "red",
-                data: yValues
+                    label: 'Aantal markers',
+                    backgroundColor: "red",
+                    data: markerCounts
                 }]
             }
         });
@@ -122,7 +161,6 @@
             <h1>
                 Jaartallen 
             </h1>
-            <p>Moet een graph statistics tabel komen, waar het aantal markers tegenover de automerken staan</p>
             <canvas id="myChart" style="width:100%;"></canvas>
         </div>
     </div>
