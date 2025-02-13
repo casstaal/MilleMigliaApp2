@@ -22,7 +22,7 @@ onMounted(async () => {
   markers.forEach((markerFromMarkers) => {
     const marker = L.marker([markerFromMarkers.latitude, markerFromMarkers.longitude]).addTo(map);
     marker.bindPopup(
-      `<b>${markerFromMarkers.title}</b><br>` +
+      `<b>${markerFromMarkers.brand}</b><br>` +
       `<img src='${markerFromMarkers.imgUrl}' alt='Image' style='width:100px; height:auto;'><br>` +
       `<a href='/markers/${markerFromMarkers.id}'>Zie details</a>`
     );

@@ -10,6 +10,9 @@
     Chart.register(...registerables);
 
     const search = ref<string>("");
+    const selectedYears = ref<number[]>([]);
+    const selectedBrands = ref<string[]>([]);
+    const selectedUsers = ref<string[]>([]);
 
     const users = ref<User[] | null>(null);
     const markers = ref<Marker[] | null>(null);
@@ -27,28 +30,87 @@
         })
     })
 
-    const markersByYear = computed(() => {
-        if (!markers.value) return {};
+    const filteredMarkers = computed(() => {
+        if (!markers.value) return [];
 
-        // Initialize an object to store the count per year
-        const yearCounts: Record<number, number> = {};
-
-        // Loop through each marker and extract the year
-        markers.value.forEach(marker => {
-            const year = new Date(marker.date).getFullYear(); // Get the year from the date
-
-            // Increment the count for that year
-            if (yearCounts[year]) {
-                yearCounts[year]++;
-            } else {
-                yearCounts[year] = 1;
-            }
+        return markers.value.filter(marker => {
+            const year = new Date(marker.date).getFullYear();
+            return (
+                (selectedYears.value.length === 0 || selectedYears.value.includes(year)) &&
+                (selectedBrands.value.length === 0 || selectedBrands.value.includes(marker.brand))
+                // (selectedUsers.value.length === 0 || selectedUsers.value.includes(marker.userName)) // Adjust based on your data structure
+            );
         });
-
-        return yearCounts; // Return the object containing the year counts
     });
 
+    const markersByYear = computed(() => {
+        const yearCounts: Record<number, number> = {};
+
+        filteredMarkers.value.forEach(marker => {
+            const year = new Date(marker.date).getFullYear();
+            yearCounts[year] = (yearCounts[year] || 0) + 1;
+        });
+
+        return yearCounts;
+    });
+
+    // const markersByYear = computed(() => {
+    //     if (!markers.value) return {};
+
+    //     // Initialize an object to store the count per year
+    //     const yearCounts: Record<number, number> = {};
+
+    //     // Loop through each marker and extract the year
+    //     markers.value.forEach(marker => {
+    //         const year = new Date(marker.date).getFullYear(); // Get the year from the date
+
+    //         // Increment the count for that year
+    //         if (yearCounts[year]) {
+    //             yearCounts[year]++;
+    //         } else {
+    //             yearCounts[year] = 1;
+    //         }
+    //     });
+
+    //     return yearCounts; // Return the object containing the year counts
+    // });
+
+    const chartData = markersByYear.value;
+
+    var years = Object.keys(chartData).map(year => parseInt(year)); // Get the years as an array
+
+    const getBrands = computed(() => {
+        if (!markers.value) return {};
+
+        return [...new Set(markers.value.map(marker => marker.brand))];
+    });
+
+    const brands = getBrands.value;
+    
+    const getModelsByBrand = (brand: any) => {
+        if (!markers.value) return [];
+        return [...new Set(markers.value
+            .filter(marker => marker.brand === brand)
+            .map(marker => marker.model))];
+    };
+
+    const models = getModelsByBrand("Ferrari").values;
+    
     const mapContainer = ref<HTMLElement | null>(null);
+
+    let chart: Chart | null = null;
+
+    watch(markersByYear, () => {
+            updateChart();
+        });
+
+        function updateChart() {
+            if (!chart) return;
+
+            chart.data.labels = Object.keys(markersByYear.value).map(year => parseInt(year));
+            chart.data.datasets[0].data = Object.values(markersByYear.value);
+            chart.update();
+        }
 
     onMounted(async () => {
         if (!mapContainer.value) return;
@@ -79,24 +141,9 @@
             radius: 500
         }).addTo(map);
 
-        const chartData = markersByYear.value;
-
-        var years = Object.keys(chartData).map(year => parseInt(year)); // Get the years as an array
         var markerCounts = years.map(year => chartData[year]); // Get the corresponding marker counts
 
-        new Chart("myChart", {
-            type: "bar",
-            data: {
-                labels: years,
-                datasets: [{
-                    label: 'Aantal markers',
-                    backgroundColor: "red",
-                    data: markerCounts
-                }]
-            }
-        });
-
-        new Chart("myChart2", {
+        chart = new Chart("myChart", {
             type: "bar",
             data: {
                 labels: years,
@@ -118,7 +165,7 @@
             <input class="form-control mb-3 mt-3 bg-white" type="text" v-model="search" placeholder="Search..." />
             <hr />
 
-            <div class="overflow-auto vh-50">
+            <div class="overflow-auto" style="max-height: 520px">
                 <div v-if="filteredUsers?.length === 0" class="text-center text-muted p-3">
                     Geen gebruikers gevonden
                 </div>
@@ -150,18 +197,48 @@
         <div class="col-lg-1"></div>
         <div class="col-lg-10">
             <h1>
-                Automerken 
-            </h1>
-            <p>Moet een graph statistics tabel komen, waar het aantal markers tegenover de automerken staat</p>
-            <canvas id="myChart2" style="width:100%;"></canvas>
-        </div>
-        <div class="col-lg-1"></div>
-        <div class="col-lg-1"></div>
-        <div class="col-lg-10">
-            <h1>
-                Jaartallen 
+                Statistieken 
             </h1>
             <canvas id="myChart" style="width:100%;"></canvas>
+        </div>
+        <div class="col-lg-1"></div>
+        <div class="row">
+            <div class="col-lg-1"></div>
+            <div class="col-lg-2">
+                <h5>Year filters</h5>
+                <div>
+                    <input class="me-2" type="checkbox" id="selectAll">
+                    <label for="selectAll">Select all</label>
+                </div>
+                <div v-for="year in years" :key="year">
+                    <input class="me-2" type="checkbox" :id="'year-' + year" :value="year" v-model="selectedYears">
+                    <label :for="'year-' + year">{{ year }}</label>
+                </div>
+            </div>
+            <div class="col-lg-2">
+                <h5>Brand filters</h5>
+                <div v-for="brand in brands" :key="brand">
+                    <input class="me-2" type="checkbox" :id="'brand-' + brand" :value="brand" v-model="selectedBrands">
+                    <label :for="'brand-' + brand">{{ brand }}</label>
+                </div>
+            </div>
+            <!-- <div class="col-lg-2">
+                <h5>Model filters</h5>
+                <div v-for="model in models">
+                    <input class="me-2" type="checkbox" :id="'model-' + model" :value="model">
+                    <label :for="'model-' + model">{{ model }}</label>
+                </div>
+            </div> -->
+            <div class="col-lg-2">
+                <h5>User filters</h5>
+                <div v-for="user in users">
+                    <input class="me-2" type="checkbox" :id="'user-' + user.id" :value="user.name">
+                    <label :for="'user-' + user.name">{{ user.name }}</label>
+                </div>
+            </div>
+            <!-- <div class="col-lg-2">
+                <button class="btn" type="button" style="background-color: #FF0000; color: white;" @click="updateChart">Save Filters</button>
+            </div> -->
         </div>
     </div>
 </template>

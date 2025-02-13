@@ -15,7 +15,8 @@ export default defineEventHandler(async (event) => {
 
     return await prisma.marker.create({
         data: {
-            title: body.title,
+            brand: body.brand,
+            model: body.model,
             imgUrl: body.imgUrl,
             latitude: body.latitude,
             longitude: body.longitude,

@@ -13,7 +13,7 @@
 
 <template>
 
-    <h1>{{ marker?.title }}</h1>
+    <h1>{{ marker?.brand }}</h1>
 
     <img src="https://mille-miglia-photos.s3.eu-north-1.amazonaws.com/imageBoardgame.jpg" alt="test" />
 

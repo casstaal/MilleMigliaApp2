@@ -91,7 +91,8 @@
 
     const schema = toTypedSchema(
         object({
-            title: string().min(1, { message: "Titel is verplicht"}),
+            brand: string().min(1, { message: "Brand is verplicht"}),
+            model: string().min(1, { message: "Model is verplicht"}),
             imgUrl: string().min(1, { message: "Afbeelding url is verplicht"}),
             date: string({ required_error: "Datum is verplicht" }).date(),
         })
@@ -101,7 +102,8 @@
         validationSchema: schema,
     });
 
-    const { value: title } = useField("title");
+    const { value: brand } = useField("brand");
+    const { value: model } = useField("model");
     const { value: imgUrl } = useField("imgUrl");
     const { value: date } = useField("date");
 
@@ -189,9 +191,14 @@
             <h4 class="text-center mt-2">Voeg marker toe</h4>
             <div class="ms-4 me-4">
                 <div class="mt-2">
-                    <label for="title" class="form-label">Titel:</label>
-                    <input class="form-control input-lg" :class="{ 'is-invalid': errors.title }" id="title" type="text" v-model="title" placeholder="Titel" />
-                    <div v-if="errors.title" class="invalid-feedback">{{  errors.title }}</div>
+                    <label for="brand" class="form-label">Brand:</label>
+                    <input class="form-control input-lg" :class="{ 'is-invalid': errors.brand }" id="brand" type="text" v-model="brand" placeholder="Brand" />
+                    <div v-if="errors.brand" class="invalid-feedback">{{  errors.brand }}</div>
+                </div>
+                <div class="mt-2">
+                    <label for="model" class="form-label">Model:</label>
+                    <input class="form-control input-lg" :class="{ 'is-invalid': errors.model }" id="model" type="text" v-model="model" placeholder="Model" />
+                    <div v-if="errors.model" class="invalid-feedback">{{  errors.model }}</div>
                 </div>
                 <div class="mt-3">
                     <label for="imgUrl" class="form-label">Afbeelding URL:</label>

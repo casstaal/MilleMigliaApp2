@@ -19,7 +19,8 @@ model User {
 
 model Marker {
       id        String   @id @default(uuid())
-      title     String
+      brand     String
+      model     String
       imgUrl    String
       latitude  Float
       longitude Float
