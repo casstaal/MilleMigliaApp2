@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Check } from "@prisma/client";
+import type { Marker } from "@prisma/client";
 import { onMounted, ref } from "vue";
 
 const mapContainer = ref<HTMLElement | null>(null);
@@ -10,7 +10,7 @@ onMounted(async () => {
   const L = await import("leaflet");
   import("leaflet/dist/leaflet.css"); 
 
-  const checks = await $fetch<Check[]>(`/api/checks`);
+  const markers = await $fetch<Marker[]>(`/api/markers`);
 
   const map = L.map(mapContainer.value).setView([41.9028, 12.4964], 6);
 
@@ -19,12 +19,12 @@ onMounted(async () => {
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   }).addTo(map);
 
-  checks.forEach((check) => {
-    const marker = L.marker([check.latitude, check.longitude]).addTo(map);
+  markers.forEach((markerFromMarkers) => {
+    const marker = L.marker([markerFromMarkers.latitude, markerFromMarkers.longitude]).addTo(map);
     marker.bindPopup(
-      `<b>${check.title}</b><br>` +
-      `<img src='${check.imgUrl}' alt='Image' style='width:100px; height:auto;'><br>` +
-      `<a href='/checks/${check.id}'>Zie details</a>`
+      `<b>${markerFromMarkers.brand}</b><br>` +
+      `<img src='${markerFromMarkers.imgUrl}' alt='Image' style='width:100px; height:auto;'><br>` +
+      `<a href='/markers/${markerFromMarkers.id}'>Zie details</a>`
     );
   });
 
@@ -33,7 +33,7 @@ onMounted(async () => {
     const lat = e.latlng.lat;
     const lng = e.latlng.lng;
 
-    window.location.href = `addCheck?lat=${lat}&lng=${lng}`;
+    window.location.href = `addMarker?lat=${lat}&lng=${lng}`;
   }
 
   map.on('click', onMapClick);

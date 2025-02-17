@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
         return createError({ statusCode: 400, message: "Invalid check id" });
     }
 
-    const check = await prisma.check.findUnique({
+    const check = await prisma.marker.findUnique({
         where: {
             id: checkId,
         }

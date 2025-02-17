@@ -1,19 +1,19 @@
 <script setup lang="ts">
     import type { FetchError } from "ofetch";
-    import type { Check } from "@prisma/client";
+    import type { Marker } from "@prisma/client";
     
     const errorMessage = ref("");
     const error = ref(false);
     const route = useRoute();
 
-    const checkId = route.params.id;
+    const markerId = route.params.id;
 
-    const { data: check } = await useFetch<Check>(`/api/checks/${checkId}`);
+    const { data: marker } = await useFetch<Marker>(`/api/markers/${markerId}`);
 </script>
 
 <template>
 
-    <h1>{{ check?.title }}</h1>
+    <h1>{{ marker?.brand }}</h1>
 
     <img src="https://mille-miglia-photos.s3.eu-north-1.amazonaws.com/imageBoardgame.jpg" alt="test" />
 
