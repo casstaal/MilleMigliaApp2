@@ -3,10 +3,42 @@
     import { object, string, z } from "zod";
     import type { FetchError } from "ofetch";
     import type { Marker } from "@prisma/client";
+    import { ref } from "vue";
 
     const router = useRouter();
     const route = useRoute();
 
+    const fileUrl = ref<string | null>(null);
+
+    const handleFileChange = async (event: Event) => {
+        const input = event.target as HTMLInputElement;
+        if (!input.files || input.files.length === 0) return;
+
+        const file = input.files[0];
+        await uploadFile(file);
+    };
+
+    const uploadFile = async (file: File) => {
+        const fileName = `${Date.now()}-${file.name}`;
+        const minioUrl = `${import.meta.env.VITE_MINIO_ENDPOINT}/${import.meta.env.VITE_MINIO_BUCKET}/${fileName}`;
+
+        try {
+            const response = await fetch(minioUrl, {
+                method: "PUT",
+                headers: { "Content-Type": file.type },
+                body: file,
+            });
+
+            if (response.ok) {
+                fileUrl.value = minioUrl;
+                imgUrl.value = minioUrl;
+            } else {
+                console.error("Upload failed:", response.statusText);
+            }
+        } catch (error) {
+            console.error("Upload error:", error);
+        }
+    };
 
     const goBack = () => {
         router.go(-1);
@@ -55,7 +87,7 @@
             return;
         }
 
-        navigateTo("/overview");
+        navigateTo("/map");
     }
 
     const onSubmit = handleSubmit(async (values) => {
@@ -79,10 +111,15 @@
                     <input class="form-control input-lg" :class="{ 'is-invalid': errors.model }" id="model" type="text" v-model="model" placeholder="Model" />
                     <div v-if="errors.model" class="invalid-feedback">{{  errors.model }}</div>
                 </div>
-                <div class="mt-3">
+                <!-- <div class="mt-3">
                     <label for="imgUrl" class="form-label">Afbeelding URL:</label>
                     <input class="form-control input-lg" :class="{ 'is-invalid': errors.imgUrl }" id="imgUrl" type="text" v-model="imgUrl" placeholder="Afbeelding URL" />
                     <div v-if="errors.imgUrl" class="invalid-feedback">{{ errors.imgUrl }}</div>
+                </div> -->
+                <div class="mt-3">
+                    <label>Afbeelding:</label>
+                    <input type="file" @change="handleFileChange" />
+                    <p v-if="fileUrl">Uploaded URL: <a :href="fileUrl" target="_blank">{{ fileUrl }}</a></p>
                 </div>
                 <div class="mt-3">
                     <label for="latitude" class="form-label">Latitude:</label>
