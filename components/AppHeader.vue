@@ -10,7 +10,7 @@
 
 
 <template>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary mt-0 mb-0">
         <div class="container-fluid" style="background-color: #003366; color:white">
             <img src="/MilleMigliaLogo.png" alt="Mille Miglia logo">
             <button class="navbar-toggler custom-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,5 +53,12 @@
 
     .custom-toggler.navbar-toggler {
         border-color: white;
+    }
+
+    .navbar {
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
     }
 </style>

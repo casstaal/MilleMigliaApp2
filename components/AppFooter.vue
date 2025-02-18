@@ -1,7 +1,7 @@
 <template>
     <div class="extra-information pt-4 ps-5 pe-3">
         <div class="row">
-            <div class="col-6 col-md-2 mb-3">
+            <div class="col-6 col-md-2">
                 <h5>Mille Miglia Staal</h5>
                 <ul class="nav flex-column">
                     <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white">Home</a></li>
@@ -12,7 +12,7 @@
                 </ul>
             </div>
 
-            <div class="col-6 col-md-2 mb-3">
+            <div class="col-6 col-md-2">
                 <h5>Mille Miglia</h5>
                 <ul class="nav flex-column">
                 <li class="nav-item mb-2"><a href="https://1000miglia.it/en/" target="_blank" class="nav-link p-0 text-white">Home</a></li>
@@ -23,7 +23,7 @@
                 </ul>
             </div>
 
-            <div class="col-6 col-md-2 mb-3">
+            <div class="col-6 col-md-2">
                 <h5>Help</h5>
                 <ul class="nav flex-column">
                 <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white">Contact</a></li>
@@ -34,7 +34,7 @@
                 </ul>
             </div>
 
-            <div class="col-md-5 offset-md-1 mb-3">
+            <div class="col-md-5 offset-md-1">
                 <form>
                 <h5>Abonneer op de nieuwsbrief.</h5>
                 <p>Dagelijkse melding als er iets nieuws geupload is.</p>
@@ -54,7 +54,6 @@
 
 <style>
     .footer {
-        /* background-color: #FF0000; */
         background-color: #003366;
         color: white;    }
 

@@ -3,8 +3,8 @@
 
   const session = await getSession();
 
-  console.log("User session:", session);
-  console.log("User role:", session?.user?.role);
+  // console.log("User session:", session);
+  // console.log("User role:", session?.user?.role);
 </script>
 
 <template>
@@ -16,11 +16,11 @@
 
       <div v-if="session?.user?.role === 'guest'" class="mb-3">
         <p>U heeft beperkte toegang als gast.</p>
-        <NuxtLink to="/overview" class="start-button btn btn-primary w-100 mt-4">Ga naar kaart</NuxtLink>
+        <NuxtLink to="/map" class="start-button btn btn-primary w-100 mt-4">Ga naar kaart</NuxtLink>
       </div>
 
       <div v-else class="mb-3">
-        <NuxtLink to="/overview" class="start-button btn btn-primary w-100 mt-4">Ga naar kaart</NuxtLink>
+        <NuxtLink to="/map" class="start-button btn btn-primary w-100 mt-4">Ga naar kaart</NuxtLink>
       </div>
     </div>
   </div>
