@@ -98,10 +98,10 @@
 
 <template>
     <div class="row">
-        <div class="car col-lg-6 col-sm-12 ms-3 mb-3">
+        <div class="col-lg-6 col-sm-12 mb-3 ms-3">
             <div class="row">
                 <div class="col-lg-9 col-sm-12">
-                    <div v-if="isEditing">
+                    <div v-if="isEditing" class="mb-2 mt-2">
                         <input v-model="editableMarker.brand" style="font-size: 1.5rem;" placeholder="Merk"/>
                         <input v-model="editableMarker.model" style="font-size: 1.5rem;" placeholder="Model"/>
                     </div>
@@ -121,7 +121,7 @@
                     <p>
                         Deze {{ marker?.brand }} {{ marker?.model }} is gefotografeerd door {{ user?.name }} tijdens de Mille Miglia van {{ year }}.
                     </p>
-                    <div class="row">
+                    <div>
                         <h6>Datum:</h6>
                         <p>{{ marker?.date }}</p>
                     </div>
@@ -158,6 +158,11 @@
     .btn:hover {
         transform: scale(1.1); 
         transition: transform 0.3s ease;
+    }
+
+    .row {
+        margin-right: 0;
+        overflow-x: hidden; 
     }
 
     @media screen and (max-width: 600px) {
