@@ -12,13 +12,16 @@
 
     const handleFileChange = async (event: Event) => {
         const input = event.target as HTMLInputElement;
-        if (!input.files || input.files.length === 0) return;
+        if (!input.files || input.files.length === 0) {
+            image.value = null;
+            return;
+        }
 
         const file = input.files[0];
-        await uploadFile(file);
+        image.value = file;
     };
 
-    const uploadFile = async (file: File) => {
+    const uploadFile = async (file: File): Promise<string> => {
         const fileName = `${Date.now()}-${file.name}`;
         const minioUrl = `${import.meta.env.VITE_MINIO_ENDPOINT}/${import.meta.env.VITE_MINIO_BUCKET}/${fileName}`;
 
@@ -30,15 +33,16 @@
             });
 
             if (response.ok) {
-                fileUrl.value = minioUrl;
-                imgUrl.value = minioUrl;
+                return minioUrl;
             } else {
                 console.error("Upload failed:", response.statusText);
+                throw response.statusText
             }
         } catch (error) {
             console.error("Upload error:", error);
+            throw error;
         }
-    };
+    }
 
     const goBack = () => {
         router.go(-1);
@@ -54,7 +58,8 @@
         object({
             brand: string().min(1, { message: "Brand is verplicht"}),
             model: string().min(1, { message: "Model is verplicht"}),
-            imgUrl: string().min(1, { message: "Afbeelding url is verplicht"}),
+            description: string().min(1, { message: "Model is verplicht"}),
+            image: z.instanceof(File, { message: "Afbeelding is verplicht"}),
             date: string({ required_error: "Datum is verplicht" }).date(),
         })
     );
@@ -65,13 +70,20 @@
 
     const { value: brand } = useField("brand");
     const { value: model } = useField("model");
-    const { value: imgUrl } = useField("imgUrl");
+    const { value: description } = useField<string>("description");
+    const { value: image } = useField("image");
     const { value: date } = useField("date");
 
     async function createCheck(values: any) {
         values.date = new Date(values.date);
         values.latitude = parseFloat(lat ?? "0");
         values.longitude = parseFloat(lng ?? "0");
+
+        const imgUrl = await uploadFile(values.image);
+        delete values.image;
+
+        values.imgUrl = imgUrl;
+
         const response = await $fetch<Marker>("/api/markers", { method: "post", body: values }).catch((e: FetchError) => {
             errorMessage.value = e.data.message;
             error.value = true;
@@ -111,25 +123,33 @@
                     <input class="form-control input-lg" :class="{ 'is-invalid': errors.model }" id="model" type="text" v-model="model" placeholder="Model" />
                     <div v-if="errors.model" class="invalid-feedback">{{  errors.model }}</div>
                 </div>
-                <!-- <div class="mt-3">
-                    <label for="imgUrl" class="form-label">Afbeelding URL:</label>
-                    <input class="form-control input-lg" :class="{ 'is-invalid': errors.imgUrl }" id="imgUrl" type="text" v-model="imgUrl" placeholder="Afbeelding URL" />
-                    <div v-if="errors.imgUrl" class="invalid-feedback">{{ errors.imgUrl }}</div>
-                </div> -->
                 <div class="mt-3">
                     <label>Afbeelding:</label>
                     <input type="file" @change="handleFileChange" />
                     <p v-if="fileUrl">Uploaded URL: <a :href="fileUrl" target="_blank">{{ fileUrl }}</a></p>
                 </div>
+                <div class="mt-2">
+                    <label for="description" class="form-label">Description:</label>
+                    <textarea 
+                        class="form-control input-lg" 
+                        :class="{ 'is-invalid': errors.description }" 
+                        id="description" 
+                        type="text"
+                        v-model="description" 
+                        placeholder="Description" 
+                        rows="5">
+                    </textarea>
+                    <div v-if="errors.description" class="invalid-feedback">{{ errors.description }}</div>
+                </div>
                 <div class="mt-3">
                     <label for="latitude" class="form-label">Latitude:</label>
-                    <input class="form-control input-lg" :class="{ 'is-invalid': errors.imgUrl }" id="latitude" type="number" :value="lat" disabled />
-                    <div v-if="errors.imgUrl" class="invalid-feedback">{{ errors.imgUrl }}</div>
+                    <input class="form-control input-lg" :class="{ 'is-invalid': errors.image }" id="latitude" type="number" :value="lat" disabled />
+                    <div v-if="errors.image" class="invalid-feedback">{{ errors.image }}</div>
                 </div>
                 <div class="mt-3">
                     <label for="longitude" class="form-label">Longitude:</label>
-                    <input class="form-control input-lg" :class="{ 'is-invalid': errors.imgUrl }" id="longitude" type="number" :value="lng" disabled />
-                    <div v-if="errors.imgUrl" class="invalid-feedback">{{ errors.imgUrl }}</div>
+                    <input class="form-control input-lg" :class="{ 'is-invalid': errors.image }" id="longitude" type="number" :value="lng" disabled />
+                    <div v-if="errors.image" class="invalid-feedback">{{ errors.image }}</div>
                 </div>
                 <div class="mt-3">
                     <label for="date" class="form-label">Datum:</label>

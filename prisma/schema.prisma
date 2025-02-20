@@ -18,13 +18,14 @@ model User {
 }
 
 model Marker {
-      id        String   @id @default(uuid())
-      brand     String
-      model     String
-      imgUrl    String
-      latitude  Float
-      longitude Float
-      date      DateTime
-      userId    String
-      user      User     @relation(fields: [userId], references: [id])
+      id          String   @id @default(uuid())
+      brand       String
+      model       String
+      description String
+      imgUrl      String
+      latitude    Float
+      longitude   Float
+      date        DateTime
+      userId      String
+      user        User     @relation(fields: [userId], references: [id])
 }
