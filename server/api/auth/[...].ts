@@ -23,9 +23,6 @@ export default NuxtAuthHandler({
             email: credentials.email,
           }
         });
-        console.log("user: ", user);
-        console.log(`user role: ${user?.role}`)
-        console.log("user role: ", user?.role);
 
         if (!user) {
           createError({ statusCode: 400, statusMessage: "Email or password is invalid" });
@@ -45,8 +42,6 @@ export default NuxtAuthHandler({
 
   callbacks: {
     async session({ session, token }) {
-      // Return the modified session
-      console.log("Session user token: ", token.firstName)
       return {
         ...session,
         user: {
