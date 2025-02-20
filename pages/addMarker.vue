@@ -110,8 +110,8 @@
 <template>
     <div class="addMarker-div d-md-flex justify-content-center align-items-center mt-5 mb-5">
         <button class="btn back-button mt-3" @click="goBack">Back</button>
-        <form @submit="onSubmit" class="addMarker-form col-sm-12 col-md-8 pe-0 ms-4 me-4 shadow rounded pt-1 pb-3">
-            <h4 class="text-center mt-2">Voeg marker toe</h4>
+        <form @submit="onSubmit" class="addMarker-form col-lg-6 col-sm-12 col-md-8 pe-0 ms-4 me-4 shadow rounded pt-1 pb-3">
+            <h2 class="text-center mt-2">Voeg marker toe</h2>
             <div class="ms-4 me-4">
                 <div class="mt-2">
                     <label for="brand" class="form-label">Brand:</label>
@@ -124,9 +124,8 @@
                     <div v-if="errors.model" class="invalid-feedback">{{  errors.model }}</div>
                 </div>
                 <div class="mt-3">
-                    <label>Afbeelding:</label>
-                    <input type="file" @change="handleFileChange" />
-                    <p v-if="fileUrl">Uploaded URL: <a :href="fileUrl" target="_blank">{{ fileUrl }}</a></p>
+                    <label class="mb-2">Afbeelding:</label><br>
+                    <input class="form-control input-lg" type="file" @change="handleFileChange" />
                 </div>
                 <div class="mt-2">
                     <label for="description" class="form-label">Description:</label>
@@ -156,7 +155,7 @@
                     <input class="form-control input-lg" :class="{ 'is-invalid': errors.date }" id="date" type="date" v-model="date" placeholder="Datum"/>
                     <div v-if="errors.date" class="invalid-feedback">{{ errors.date }}</div>
                 </div>
-                <button class="create-check-button btn btn-lg mt-3 col-12" type="submit">Opslaan</button>
+                <button class="create-check-button btn btn-lg mt-3 mb-2 col-12" type="submit">Opslaan</button>
             </div>
         </form>
     </div>
@@ -168,12 +167,23 @@
         color: white;
     }
 
-    .addMarker-form {
-        background-color: #003366;
+    .create-check-button:hover {
+        background-color: #FF0000;
         color: white;
     }
 
+    .addMarker-form {
+        background-color: #003366;
+        color: white;
+        overflow: hidden;
+    }
+
     .back-button {
+        background-color: #FF0000;
+        color: white;
+    }
+
+    .back-button:hover {
         background-color: #FF0000;
         color: white;
     }

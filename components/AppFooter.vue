@@ -4,11 +4,11 @@
             <div class="col-6 col-md-2">
                 <h5>Mille Miglia Staal</h5>
                 <ul class="nav flex-column">
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white">Home</a></li>
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white">Overview</a></li>
+                    <li class="nav-item mb-2"><a href="/" class="nav-link p-0 text-white">Home</a></li>
+                    <li class="nav-item mb-2"><a href="map" class="nav-link p-0 text-white">Map</a></li>
                     <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white">Dashboard</a></li>
                     <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white">Account</a></li>
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white">About</a></li>
+                    <li class="nav-item mb-2"><a href="/about" class="nav-link p-0 text-white">About</a></li>
                 </ul>
             </div>
 

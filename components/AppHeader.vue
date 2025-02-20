@@ -12,17 +12,19 @@
 <template>
     <nav class="navbar navbar-expand-lg bg-body-tertiary mt-0 mb-0">
         <div class="container-fluid" style="background-color: #003366; color:white">
-            <img src="/MilleMigliaLogo.png" alt="Mille Miglia logo">
+            <a href="/">
+                <img src="/MilleMigliaLogo.png" alt="Mille Miglia logo">
+            </a>
             <button class="navbar-toggler custom-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="#">Home</a>
+                        <a class="nav-link text-white" href="/">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="#">Overview</a>
+                        <a class="nav-link text-white" href="/map">Map</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-white" href="#">Dashboard</a>
@@ -30,7 +32,9 @@
                 </ul>
                 <div class="d-flex align-items-center justify-content-center">
                     <button class="btn-logout btn" @click="logout" style="background-color: #FF0000; color:white;">Logout</button>
-                    <Icon icon="codicon:account" :style="{ fontSize: '48px'}" :ssr="true" class="me-3 ms-2" />         
+                    <a href="/account" class="nav-link text-white">
+                        <Icon icon="codicon:account" :style="{ fontSize: '48px'}" :ssr="true" class="me-3 ms-2" />         
+                    </a>
                 </div>
             </div>
         </div>

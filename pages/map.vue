@@ -3,6 +3,7 @@ import type { Marker } from "@prisma/client";
 import { onMounted, ref } from "vue";
 
 const mapContainer = ref<HTMLElement | null>(null);
+const loading = ref(true);
 
 onMounted(async () => {
   if (!mapContainer.value) return;
@@ -22,10 +23,18 @@ onMounted(async () => {
   markers.forEach((markerFromMarkers) => {
     const marker = L.marker([markerFromMarkers.latitude, markerFromMarkers.longitude]).addTo(map);
     marker.bindPopup(
-      `<b>${markerFromMarkers.brand}</b><br>` +
+      `<b>${markerFromMarkers.brand} ${markerFromMarkers.model}</b><br>` +
       `<img src='${markerFromMarkers.imgUrl}' alt='Image' style='width:100px; height:auto;'><br>` +
-      `<a href='/markers/${markerFromMarkers.id}'>Zie details</a>`
+      `<div style='text-align:center; margin-top:8px;'>
+      <a href='/markers/${markerFromMarkers.id}' style='display:inline-block; padding:8px 12px; width: 100px; background-color:#003366; color:white; text-decoration:none; border-radius:4px;'>
+        Zie details
+      </a>
+    </div>`    
     );
+  });
+
+  map.whenReady(() => {
+            loading.value = false;
   });
 
 
@@ -41,6 +50,9 @@ onMounted(async () => {
 </script>
 
 <template>
+  <div v-if="loading" class="loading-container">
+    <p class="text-center fs-1">De kaart wordt geladen.....</p>
+  </div>
   <div ref="mapContainer" class="map-container"></div>
 </template>
 
@@ -48,5 +60,11 @@ onMounted(async () => {
 .map-container {
   width: 100%;
   height: 900px; 
+}
+
+.loading-container {
+  width: 100%;
+  height: 900px;
+  border: 0px solid #fff;
 }
 </style>
