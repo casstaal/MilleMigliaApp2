@@ -58,6 +58,7 @@
         object({
             brand: string().min(1, { message: "Brand is verplicht"}),
             model: string().min(1, { message: "Model is verplicht"}),
+            description: string().min(1, { message: "Model is verplicht"}),
             image: z.instanceof(File, { message: "Afbeelding is verplicht"}),
             date: string({ required_error: "Datum is verplicht" }).date(),
         })
@@ -69,6 +70,7 @@
 
     const { value: brand } = useField("brand");
     const { value: model } = useField("model");
+    const { value: description } = useField<string>("description");
     const { value: image } = useField("image");
     const { value: date } = useField("date");
 
@@ -121,15 +123,23 @@
                     <input class="form-control input-lg" :class="{ 'is-invalid': errors.model }" id="model" type="text" v-model="model" placeholder="Model" />
                     <div v-if="errors.model" class="invalid-feedback">{{  errors.model }}</div>
                 </div>
-                <!-- <div class="mt-3">
-                    <label for="imgUrl" class="form-label">Afbeelding URL:</label>
-                    <input class="form-control input-lg" :class="{ 'is-invalid': errors.imgUrl }" id="imgUrl" type="text" v-model="imgUrl" placeholder="Afbeelding URL" />
-                    <div v-if="errors.imgUrl" class="invalid-feedback">{{ errors.imgUrl }}</div>
-                </div> -->
                 <div class="mt-3">
                     <label>Afbeelding:</label>
                     <input type="file" @change="handleFileChange" />
                     <p v-if="fileUrl">Uploaded URL: <a :href="fileUrl" target="_blank">{{ fileUrl }}</a></p>
+                </div>
+                <div class="mt-2">
+                    <label for="description" class="form-label">Description:</label>
+                    <textarea 
+                        class="form-control input-lg" 
+                        :class="{ 'is-invalid': errors.description }" 
+                        id="description" 
+                        type="text"
+                        v-model="description" 
+                        placeholder="Description" 
+                        rows="5">
+                    </textarea>
+                    <div v-if="errors.description" class="invalid-feedback">{{ errors.description }}</div>
                 </div>
                 <div class="mt-3">
                     <label for="latitude" class="form-label">Latitude:</label>

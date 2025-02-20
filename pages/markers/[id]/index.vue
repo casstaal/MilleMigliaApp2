@@ -4,7 +4,7 @@
     import { onMounted, ref } from "vue";
 
     const isEditing = ref(false); 
-    const editableMarker = ref<Marker>({ id: '', brand: '', model: '', imgUrl: '', date: new Date(), latitude: 0, longitude: 0, userId: '' }); // Initialized with defaults
+    const editableMarker = ref<Marker>({ id: '', brand: '', model: '', description: '', imgUrl: '', date: new Date(), latitude: 0, longitude: 0, userId: '' });
     const route = useRoute();
     const errorMessage = ref("");
     const error = ref(false);
@@ -44,6 +44,26 @@
         }
     }
 
+    async function updateMarker() {
+        const response = await $fetch<Marker>(`/api/markers/${markerId}`, { method: "put", body: editableMarker.value }).catch((e: FetchError) => {
+            errorMessage.value = e.data.message;
+            error.value = true;
+        });
+
+        if (error.value) {
+            return;
+        }
+
+        if (!response) {
+            errorMessage.value = "An error occurred";
+            error.value = true;
+            return;
+        }
+
+        navigateTo(`/map`);
+        // navigateTo(`/markers/${markerId}`);
+    }
+
     async function deleteMarker() {
         const response = await $fetch<Marker>(`/api/markers/${markerId}`, { method: "delete"}).catch((e: FetchError) => {
             errorMessage.value = e.data.message;
@@ -74,6 +94,7 @@
     }
 
     const mapContainer = ref<HTMLElement | null>(null);
+    const loading = ref(true);
 
     onMounted(async () => {
         if (!mapContainer.value) return;
@@ -93,6 +114,10 @@
 
         const markerForMap = L.marker([latitude, longitude]).addTo(map);
         map.flyTo([latitude, longitude], map.getZoom() + 2);
+
+        map.whenReady(() => {
+            loading.value = false;
+        });
     });
 </script>
 
@@ -108,8 +133,14 @@
                     <span v-else><h1>{{ marker?.brand }} {{ marker?.model }}</h1></span>
                 </div>
                 <div class="col-lg-3 col-sm-12 mt-2">
-                    <button @click="toggleEditMode" class="btn col-6" style="background-color: #003366; color: white;">Edit</button>
-                    <button @click="confirmDelete" class="btn col-6" style="background-color: #FF0000; color: white;">Delete</button>
+                    <div v-if="isEditing">
+                        <button @click="updateMarker" class="btn col-6" style="background-color: #003366; color: white;">Save</button>
+                        <button @click="toggleEditMode" class="btn col-6" style="background-color: #FF0000; color: white;">Cancel</button>
+                    </div>
+                    <span v-else>
+                        <button @click="toggleEditMode" class="btn col-6" style="background-color: #003366; color: white;">Edit</button>
+                        <button @click="confirmDelete" class="btn col-6" style="background-color: #FF0000; color: white;">Delete</button>
+                    </span>
                 </div>
             </div>
             <img class="carImg" :src="marker?.imgUrl" alt="test"/>
@@ -123,19 +154,39 @@
                     </p>
                     <div>
                         <h6>Datum:</h6>
-                        <p>{{ marker?.date }}</p>
+                        <div v-if="isEditing">
+                            <input type="date" v-model="editableMarker.date" placeholder="Datum"/>
+                        </div>
+                        <span v-else>
+                            <p>{{ marker?.date ? new Date(marker.date).toISOString().split('T')[0] : '' }}</p>
+                        </span>
                     </div>
                 </div>
             </div>
             <div>
                 <h4>Beschrijving {{ user?.name }}:</h4>
-                <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."</p>
+                <div v-if="isEditing">
+                    <textarea 
+                        class="w-100"
+                        type="text"
+                        v-model="editableMarker.description" 
+                        placeholder="Description" 
+                        cols="50"
+                        rows="5">
+                    </textarea>
+                </div>
+                <span v-else>
+                    <p>{{ marker?.description }}</p>
+                </span>
             </div>
             <div>
                 <h4>Locatie:</h4>
+                <div v-if="loading" class="loading-container">
+                    <p>De kaart wordt geladen.....</p>
+                </div>
                 <div ref="mapContainer" class="map-container"></div>
             </div>
-            <div>
+            <div class="mt-3">
                 <h4>Beschrijving van Mille Miglia:</h4>
                 <p>Het idee is om het nummer van de auto mee te geven en dan door de pdf heen te lezen, om zo de informatie op te vragen</p>
             </div>
@@ -153,6 +204,12 @@
     .map-container {
         width: 50%;
         height: 300px; 
+    }
+
+    .loading-container {
+        width: 50%;
+        height: 300px;
+        border: 2px solid #000000;
     }
 
     .btn:hover {

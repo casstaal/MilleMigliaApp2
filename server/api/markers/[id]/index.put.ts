@@ -9,20 +9,20 @@ export default defineEventHandler(async (event) => {
     }
 
     const userId = session?.user.userId;
+    const checkId = event.context.params?.id;
 
     const prisma = usePrisma();
     const body = await readBody(event);
 
-    return await prisma.marker.create({
+    return await prisma.marker.update({
+        where: {
+            id: checkId
+        },
         data: {
             brand: body.brand,
             model: body.model,
             description: body.description,
-            imgUrl: body.imgUrl,
-            latitude: body.latitude,
-            longitude: body.longitude,
             date: body.date,
-            userId: userId
         },
     });
 });
