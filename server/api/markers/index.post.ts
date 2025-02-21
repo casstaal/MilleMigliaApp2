@@ -19,10 +19,14 @@ export default defineEventHandler(async (event) => {
             model: body.model,
             description: body.description,
             imgUrl: body.imgUrl,
+            imgUrl2: body.imgUrl2,
+            imgUrl3: body.imgUrl3,
+            imgUrl4: body.imgUrl4,
+            imgUrl5: body.imgUrl5,
             latitude: body.latitude,
             longitude: body.longitude,
             date: body.date,
-            userId: userId
+            userId: userId,
         },
     });
 });

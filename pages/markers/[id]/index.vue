@@ -4,7 +4,13 @@
     import { onMounted, ref } from "vue";
 
     const isEditing = ref(false); 
-    const editableMarker = ref<Marker>({ id: '', brand: '', model: '', description: '', imgUrl: '', date: new Date(), latitude: 0, longitude: 0, userId: '' });
+    const editableMarker = ref<Marker>({
+        id: '', brand: '', model: '', description: '', imgUrl: '', date: new Date(), latitude: 0, longitude: 0, userId: '',
+        imgUrl2: "",
+        imgUrl3: "",
+        imgUrl4: "",
+        imgUrl5: ""
+    });
     const route = useRoute();
     const errorMessage = ref("");
     const error = ref(false);
@@ -196,16 +202,16 @@
         <div class="col-lg-6 ms-3 mb-3">
             <div class="row">
                 <div class="col-lg-3">
-                    <img class="carImg" :src="marker?.imgUrl" alt="test"/>
+                    <img class="carImg" :src="marker?.imgUrl2" alt="test"/>
                 </div>
                 <div class="col-lg-3">
-                    <img class="carImg" :src="marker?.imgUrl" alt="test"/>
+                    <img class="carImg" :src="marker?.imgUrl3" alt="test"/>
                 </div>
                 <div class="col-lg-3">
-                    <img class="carImg" :src="marker?.imgUrl" alt="test"/>
+                    <img class="carImg" :src="marker?.imgUrl4" alt="test"/>
                 </div>
                 <div class="col-lg-3">
-                    <img class="carImg" :src="marker?.imgUrl" alt="test"/>
+                    <img class="carImg" :src="marker?.imgUrl5" alt="test"/>
                 </div>
             </div>
         </div>
