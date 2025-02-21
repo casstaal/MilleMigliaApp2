@@ -2,6 +2,7 @@
     import type { FetchError } from "ofetch";
     import type { Marker, User } from "@prisma/client";
     import { onMounted, ref } from "vue";
+import { string } from "zod";
 
     const isEditing = ref(false); 
     const editableMarker = ref<Marker>({
@@ -30,6 +31,44 @@
 
     function toggleEditMode() {
         isEditing.value = !isEditing.value;
+    }
+
+    const firstImage = ref(marker?.value?.imgUrl);
+    // const secondImage = ref(marker?.value?.imgUrl2);
+    // const thirdImage = ref(marker?.value?.imgUrl3);
+    // const fourthImage = ref(marker?.value?.imgUrl4);
+
+    const firstImageSelected = ref(true);
+    const secondImageSelected = ref(false);
+    const thirdImageSelected = ref(false);
+    const fourthImageSelected = ref(false);
+
+    function toggleImage(imgNumber: number) {
+        if (imgNumber === 1) {
+            firstImage.value = marker?.value?.imgUrl;
+            firstImageSelected.value = true;
+            secondImageSelected.value = false;
+            thirdImageSelected.value = false;
+            fourthImageSelected.value = false;
+        } else if (imgNumber === 2) {
+            firstImage.value = marker?.value?.imgUrl2;
+            firstImageSelected.value = false;
+            secondImageSelected.value = true;
+            thirdImageSelected.value = false;
+            fourthImageSelected.value = false;
+        } else if (imgNumber === 3) {
+            firstImage.value = marker?.value?.imgUrl3;
+            firstImageSelected.value = false;
+            secondImageSelected.value = false;
+            thirdImageSelected.value = true;
+            fourthImageSelected.value = false;
+        } else if (imgNumber === 4) {
+            firstImage.value = marker?.value?.imgUrl4;
+            firstImageSelected.value = false;
+            secondImageSelected.value = false;
+            thirdImageSelected.value = false;
+            fourthImageSelected.value = true;
+        } 
     }
 
     async function deleteFileFromMinIO() {
@@ -149,7 +188,7 @@
                     </span>
                 </div>
             </div>
-            <img class="carImg" :src="marker?.imgUrl" alt="test"/>
+            <img class="carImg" :src="firstImage" alt="test"/>
         </div>
         <div class="col-lg-5 col-sm-12 mt-5">
             <div>
@@ -201,17 +240,37 @@
     <div class="row">
         <div class="col-lg-6 ms-3 mb-3">
             <div class="row">
-                <div class="col-lg-3">
-                    <img class="carImg" :src="marker?.imgUrl2" alt="test"/>
+                <div v-if="marker?.imgUrl" class="col-lg-3">
+                    <div v-if="!firstImageSelected">
+                        <img class="carImg" :src="marker?.imgUrl" alt="test" @click="toggleImage(1)"/>
+                    </div>
+                    <div v-if="firstImageSelected" class="border border-4 border-danger">
+                        <img class="carImg" :src="marker?.imgUrl" alt="test" @click="toggleImage(1)"/>
+                    </div>
                 </div>
-                <div class="col-lg-3">
-                    <img class="carImg" :src="marker?.imgUrl3" alt="test"/>
+                <div v-if="marker?.imgUrl2" class="col-lg-3">
+                    <div v-if="!secondImageSelected">
+                        <img class="carImg" :src="marker?.imgUrl2" alt="test" @click="toggleImage(2)"/>
+                    </div>
+                    <div v-if="secondImageSelected" class="border border-4 border-danger">
+                        <img class="carImg" :src="marker?.imgUrl2" alt="test" @click="toggleImage(2)"/>
+                    </div>
                 </div>
-                <div class="col-lg-3">
-                    <img class="carImg" :src="marker?.imgUrl4" alt="test"/>
+                <div v-if="marker?.imgUrl3" class="col-lg-3">
+                    <div v-if="!thirdImageSelected">
+                        <img class="carImg" :src="marker?.imgUrl3" alt="test" @click="toggleImage(3)"/>
+                    </div>
+                    <div v-if="thirdImageSelected" class="border border-4 border-danger">
+                        <img class="carImg" :src="marker?.imgUrl3" alt="test" @click="toggleImage(3)"/>
+                    </div>
                 </div>
-                <div class="col-lg-3">
-                    <img class="carImg" :src="marker?.imgUrl5" alt="test"/>
+                <div v-if="marker?.imgUrl4" class="col-lg-3">
+                    <div v-if="!fourthImageSelected">
+                        <img class="carImg" :src="marker?.imgUrl4" alt="test" @click="toggleImage(4)"/>
+                    </div>
+                    <div v-if="fourthImageSelected" class="border border-4 border-danger">
+                        <img class="carImg" :src="marker?.imgUrl4" alt="test" @click="toggleImage(4)"/>
+                    </div>
                 </div>
             </div>
         </div>
@@ -223,6 +282,7 @@
     .carImg {
         height: auto;
         width: 100%;
+        cursor: pointer;
     }
 
     .map-container {
