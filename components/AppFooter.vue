@@ -47,7 +47,7 @@
             </div>
         </div>
     </div>
-    <div class="footer d-flex align-items-center justify-content-center mx-auto">
+    <div class="footer d-flex align-items-center justify-content-center mx-auto w-100">
         <p>© 2025 Company, Inc</p>
     </div>
 </template>

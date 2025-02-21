@@ -24,9 +24,9 @@ onMounted(async () => {
     const marker = L.marker([markerFromMarkers.latitude, markerFromMarkers.longitude]).addTo(map);
     marker.bindPopup(
       `<b>${markerFromMarkers.brand} ${markerFromMarkers.model}</b><br>` +
-      `<img src='${markerFromMarkers.imgUrl}' alt='Image' style='width:100px; height:auto;'><br>` +
-      `<div style='text-align:center; margin-top:8px;'>
-      <a href='/markers/${markerFromMarkers.id}' style='display:inline-block; padding:8px 12px; width: 100px; background-color:#003366; color:white; text-decoration:none; border-radius:4px;'>
+      `<img src='${markerFromMarkers.imgUrl}' alt='Image' style='width:100%; height:auto; display:block; margin:0 auto;'><br>` +      
+      `<div style='text-align:center;'>
+      <a href='/markers/${markerFromMarkers.id}' style='display:inline-block; padding:8px 12px; width: 100%; background-color:#003366; color:white; text-decoration:none; border-radius:4px;'>
         Zie details
       </a>
     </div>`    
@@ -59,7 +59,7 @@ onMounted(async () => {
 <style scoped>
 .map-container {
   width: 100%;
-  height: 900px; 
+  height: 1000px; 
 }
 
 .loading-container {
