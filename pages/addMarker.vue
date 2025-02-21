@@ -4,13 +4,20 @@
     import type { FetchError } from "ofetch";
     import type { Marker } from "@prisma/client";
     import { ref } from "vue";
+    import { Icon } from "@iconify/vue";
 
     const router = useRouter();
     const route = useRoute();
 
-    const fileUrl = ref<string | null>(null);
+    const fileUrls = ref<(string | null)[]>(Array(5).fill(null));
+    const firstImageSelected = ref(false);
+    const secondImageSelected = ref(false);
+    const thirdImageSelected = ref(false);
+    const fourthImageSelected = ref(false);
+    const fifthImageSelected = ref(false);
 
-    const handleFileChange = async (event: Event) => {
+
+    const handleFileChange = async (event: Event, index: number) => {
         const input = event.target as HTMLInputElement;
         if (!input.files || input.files.length === 0) {
             image.value = null;
@@ -18,10 +25,11 @@
         }
 
         const file = input.files[0];
-        image.value = file;
+        // image.value = file;
+        await uploadFile(file, index);
     };
 
-    const uploadFile = async (file: File): Promise<string> => {
+    const uploadFile = async (file: File, index: number) => {
         const fileName = `${Date.now()}-${file.name}`;
         const minioUrl = `${import.meta.env.VITE_MINIO_ENDPOINT}/${import.meta.env.VITE_MINIO_BUCKET}/${fileName}`;
 
@@ -33,7 +41,19 @@
             });
 
             if (response.ok) {
-                return minioUrl;
+                fileUrls.value[index] = minioUrl;
+                if (index == 0) {
+                    firstImageSelected.value = true;
+                } else if (index == 1) {
+                    secondImageSelected.value = true;
+                } else if (index == 2) {
+                    thirdImageSelected.value = true;
+                } else if (index == 3) {
+                    fourthImageSelected.value = true;
+                } else if (index == 4) {
+                    fifthImageSelected.value = true;
+                }
+                console.log(fileUrls.value);
             } else {
                 console.error("Upload failed:", response.statusText);
                 throw response.statusText
@@ -79,10 +99,10 @@
         values.latitude = parseFloat(lat ?? "0");
         values.longitude = parseFloat(lng ?? "0");
 
-        const imgUrl = await uploadFile(values.image);
-        delete values.image;
+        // const imgUrl = await uploadFile(values.image);
+        // delete values.image;
 
-        values.imgUrl = imgUrl;
+        // values.imgUrl = imgUrl;
 
         const response = await $fetch<Marker>("/api/markers", { method: "post", body: values }).catch((e: FetchError) => {
             errorMessage.value = e.data.message;
@@ -110,7 +130,7 @@
 <template>
     <div class="addMarker-div d-md-flex justify-content-center align-items-center mt-5 mb-5">
         <button class="btn back-button mt-3" @click="goBack">Back</button>
-        <form @submit="onSubmit" class="addMarker-form col-lg-6 col-sm-12 col-md-8 pe-0 ms-4 me-4 shadow rounded pt-1 pb-3">
+        <form @submit="onSubmit" class="addMarker-form col-lg-4 col-sm-12 col-md-8 pe-0 ms-4 me-4 shadow rounded pt-1 pb-3">
             <h2 class="text-center mt-2">Voeg marker toe</h2>
             <div class="ms-4 me-4">
                 <div class="mt-2">
@@ -125,7 +145,55 @@
                 </div>
                 <div class="mt-3">
                     <label class="mb-2">Afbeelding:</label><br>
-                    <input class="form-control input-lg" type="file" @change="handleFileChange" />
+                    <input class="form-control input-lg" type="file" @change="handleFileChange($event, 0)" />
+                </div>
+                <div v-if="firstImageSelected" class="row p-3 d-flex align-items-center ms-3">
+                    <div class="col-lg-2 border p-2 rounded me-3 ms-2 d-flex justify-content-center align-items-center">
+                        <img :src="fileUrls[0] ? fileUrls[0] : ''" alt="car image" style="width: 100%; height: auto;"/>
+                    </div>
+                    <!-- Second Image -->
+                    <div v-if="!secondImageSelected" class="col-lg-2 border p-2 rounded me-3 ms-2 d-flex justify-content-center align-items-center">
+                        <label for="fileInput1" class="d-flex justify-content-center align-items-center" style="cursor: pointer;">
+                            <Icon icon="codicon:add" :style="{ fontSize: '48px'}" :ssr="true" />
+                        </label>
+                        <input type="file" id="fileInput1" class="d-none" @change="handleFileChange($event, 1)" />
+                    </div>
+                    <div v-if="secondImageSelected" class="col-lg-2 border p-2 rounded me-3 ms-2 d-flex justify-content-center align-items-center">
+                        <img :src="fileUrls[1] ? fileUrls[1] : ''" alt="car image" style="width: 100%; height: auto;"/>
+                    </div>
+
+                    <!-- Third Image -->
+                    <div v-if="!thirdImageSelected" class="col-lg-2 border p-2 rounded me-3 ms-2 d-flex justify-content-center align-items-center">
+                        <label for="fileInput2" class="d-flex justify-content-center align-items-center" style="cursor: pointer;">
+                            <Icon icon="codicon:add" :style="{ fontSize: '48px'}" :ssr="true" />
+                        </label>
+                        <input type="file" id="fileInput2" class="d-none" @change="handleFileChange($event, 2)" />
+                    </div>
+                    <div v-if="thirdImageSelected" class="col-lg-2 border p-2 rounded me-3 ms-2 d-flex justify-content-center align-items-center">
+                        <img :src="fileUrls[2] ? fileUrls[2] : ''" alt="car image" style="width: 100%; height: auto;"/>
+                    </div>
+
+                    <!-- Fourth Image -->
+                    <div v-if="!fourthImageSelected" class="col-lg-2 border p-2 rounded me-3 ms-2 d-flex justify-content-center align-items-center">
+                        <label for="fileInput3" class="d-flex justify-content-center align-items-center" style="cursor: pointer;">
+                            <Icon icon="codicon:add" :style="{ fontSize: '48px'}" :ssr="true" />
+                        </label>
+                        <input type="file" id="fileInput3" class="d-none" @change="handleFileChange($event, 3)" />
+                    </div>
+                    <div v-if="fourthImageSelected" class="col-lg-2 border p-2 rounded me-3 ms-2 d-flex justify-content-center align-items-center">
+                        <img :src="fileUrls[3] ? fileUrls[3] : ''" alt="car image" style="width: 100%; height: auto;"/>
+                    </div>
+
+                    <!-- Fifth Image -->
+                    <div v-if="!fifthImageSelected" class="col-lg-2 border p-2 rounded me-3 ms-2 d-flex justify-content-center align-items-center">
+                        <label for="fileInput4" class="d-flex justify-content-center align-items-center" style="cursor: pointer;">
+                            <Icon icon="codicon:add" :style="{ fontSize: '48px'}" :ssr="true" />
+                        </label>
+                        <input type="file" id="fileInput4" class="d-none" @change="handleFileChange($event, 4)" />
+                    </div>
+                    <div v-if="fifthImageSelected" class="col-lg-2 border p-2 rounded me-3 ms-2 d-flex justify-content-center align-items-center">
+                        <img :src="fileUrls[4] ? fileUrls[4] : ''" alt="car image" style="width: 100%; height: auto;"/>
+                    </div>
                 </div>
                 <div class="mt-2">
                     <label for="description" class="form-label">Description:</label>

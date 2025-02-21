@@ -192,6 +192,24 @@
             </div>
         </div>
     </div>
+    <div class="row">
+        <div class="col-lg-6 ms-3 mb-3">
+            <div class="row">
+                <div class="col-lg-3">
+                    <img class="carImg" :src="marker?.imgUrl" alt="test"/>
+                </div>
+                <div class="col-lg-3">
+                    <img class="carImg" :src="marker?.imgUrl" alt="test"/>
+                </div>
+                <div class="col-lg-3">
+                    <img class="carImg" :src="marker?.imgUrl" alt="test"/>
+                </div>
+                <div class="col-lg-3">
+                    <img class="carImg" :src="marker?.imgUrl" alt="test"/>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
 <style>
