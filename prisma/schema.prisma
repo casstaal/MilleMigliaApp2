@@ -22,11 +22,7 @@ model Marker {
       brand        String
       model        String
       description  String
-      imgUrl       String
-      imgUrl2      String
-      imgUrl3      String
-      imgUrl4      String
-      imgUrl5      String
+      images       String[]
       latitude     Float
       longitude    Float
       date         DateTime

@@ -21,7 +21,10 @@ export default defineEventHandler(async (event) => {
         data: {
             brand: body.brand,
             model: body.model,
+            images: body.images,
             description: body.description,
+            latitude: body.latitude,
+            longitude: body.longitude,
             date: body.date,
         },
     });

@@ -5,16 +5,17 @@
     import type { Marker } from "@prisma/client";
     import { ref } from "vue";
     import { Icon } from "@iconify/vue";
+    // import WalkthroughModal from "./WalkthroughModal.vue";
+    import WalkthroughModal from "~/components/WalkthroughModal.vue";
 
     const router = useRouter();
     const route = useRoute();
 
-    const fileUrls = ref<(string | null)[]>(Array(5).fill(null));
+    const fileUrls = ref<(string | null)[]>(Array(4).fill(null));
     const firstImageSelected = ref(false);
     const secondImageSelected = ref(false);
     const thirdImageSelected = ref(false);
     const fourthImageSelected = ref(false);
-    const fifthImageSelected = ref(false);
 
 
     const handleFileChange = async (event: Event, index: number) => {
@@ -88,15 +89,12 @@
                 thirdImageSelected.value = false;
             } else if (index == 3) {
                 fourthImageSelected.value = false;
-            } else if (index == 4) {
-                fifthImageSelected.value = false;
             }
 
             console.log("first image value", fileUrls.value[0])
             console.log("second image value", fileUrls.value[1])
             console.log("third image value", fileUrls.value[2])
             console.log("fourth image value", fileUrls.value[3])
-            console.log("fifth image value", fileUrls.value[4])
         } catch (error) {
             console.error("Delete error:", error);
             return;
@@ -124,9 +122,7 @@
                     thirdImageSelected.value = true;
                 } else if (index == 3) {
                     fourthImageSelected.value = true;
-                } else if (index == 4) {
-                    fifthImageSelected.value = true;
-                }
+                } 
                 console.log(fileUrls.value);
             } else {
                 console.error("Upload failed:", response.statusText);
@@ -142,6 +138,16 @@
         await deleteFilesFromMinIO();
         router.go(-1);
     }
+
+    // Walkthrough
+    const showModal = ref(false);
+    const currentStep = ref<number>(0);
+
+    async function startWalkThrough() {
+        showModal.value = true;
+    }
+
+
 
     const lat = typeof route.query.lat === 'string' ? route.query.lat : null;
     const lng = typeof route.query.lng === 'string' ? route.query.lng : null;
@@ -174,11 +180,12 @@
         values.latitude = parseFloat(lat ?? "0");
         values.longitude = parseFloat(lng ?? "0");
 
-        values.imgUrl = fileUrls.value[0] ? fileUrls.value[0] : '';
-        values.imgUrl2 = fileUrls.value[1] ? fileUrls.value[1] : '';
-        values.imgUrl3 = fileUrls.value[2] ? fileUrls.value[2] : '';
-        values.imgUrl4 = fileUrls.value[3] ? fileUrls.value[3] : '';
-        values.imgUrl5 = fileUrls.value[4] ? fileUrls.value[4] : '';
+        values.images = Array.isArray(values.images) ? values.images : [];
+
+        values.images[0] = fileUrls.value[0] ? fileUrls.value[0] : '';
+        values.images[1] = fileUrls.value[1] ? fileUrls.value[1] : '';
+        values.images[2] = fileUrls.value[2] ? fileUrls.value[2] : '';
+        values.images[3] = fileUrls.value[3] ? fileUrls.value[3] : '';
 
 
         // const imgUrl = await uploadFile(values.image);
@@ -213,7 +220,11 @@
     <div class="addMarker-div d-md-flex justify-content-center align-items-center mt-5 mb-5">
         <button class="btn back-button mt-3" @click="goBack">Back</button>
         <form @submit="onSubmit" class="addMarker-form col-lg-4 col-sm-12 col-md-8 pe-0 ms-4 me-4 shadow rounded pt-1 pb-3">
-            <h2 class="text-center mt-2">Voeg marker toe</h2>
+            <div class="row">
+                <h2 class="text-center mt-2">Voeg marker toe</h2>
+                <Icon icon="codicon:lightbulb" :style="{ fontSize: '26px', cursor: 'pointer', color: '#FFF' }" :ssr="true" @click="startWalkThrough" />
+                <!-- <WalkthroughModal v-if="showModal" :isVisible="showModal" @close="showModal = false" /> -->
+            </div>
             <div class="ms-4 me-4">
                 <div class="mt-2">
                     <label for="brand" class="form-label">Brand:</label>
@@ -229,21 +240,21 @@
                     <label class="mb-2">Afbeelding:</label><br>
                     <input class="form-control input-lg" type="file" @change="handleFileChange($event, 0)" />
                 </div>
-                <div v-if="fileUrls[0]" class="row p-3 d-flex align-items-center ms-3">
-                    <div class="col-lg-2 border p-2 rounded me-3 ms-2 d-flex justify-content-center align-items-center position-relative">
+                <div v-if="fileUrls[0]" class="row p-3 d-flex align-items-center">
+                    <div class="col-lg-3 border p-2 rounded d-flex justify-content-center align-items-center position-relative">
                         <img :src="fileUrls[0] ? fileUrls[0] : ''" alt="car image" style="width: 100%; height: auto;"/>
                         <div class="position-absolute bottom-0 end-0 mb-2 me-2">
                             <Icon icon="codicon:trash" :style="{ fontSize: '26px', cursor: 'pointer', color: '#FF0000' }" :ssr="true" @click="deleteFileFromMinIO(0)" />
                         </div>
                     </div>
                     <!-- Second Image -->
-                    <div v-if="!fileUrls[1]" class="col-lg-2 border p-2 rounded me-3 ms-2 d-flex justify-content-center align-items-center">
+                    <div v-if="!fileUrls[1]" class="col-lg-3 border p-2 rounded d-flex justify-content-center align-items-center">
                         <label for="fileInput1" class="d-flex justify-content-center align-items-center" style="cursor: pointer;">
                             <Icon icon="codicon:add" :style="{ fontSize: '48px'}" :ssr="true" />
                         </label>
                         <input type="file" id="fileInput1" class="d-none" @change="handleFileChange($event, 1)" />
                     </div>
-                    <div v-if="fileUrls[1]" class="col-lg-2 border p-2 rounded me-3 ms-2 d-flex justify-content-center align-items-center position-relative">
+                    <div v-if="fileUrls[1]" class="col-lg-3 border p-2 rounded d-flex justify-content-center align-items-center position-relative">
                         <img :src="fileUrls[1] ? fileUrls[1] : ''" alt="car image" style="width: 100%; height: auto;"/>
                         <div class="position-absolute bottom-0 end-0 mb-2 me-2">
                             <Icon icon="codicon:trash" :style="{ fontSize: '26px', cursor: 'pointer', color: '#FF0000' }" :ssr="true" @click="deleteFileFromMinIO(1)" />
@@ -251,13 +262,13 @@
                     </div>
 
                     <!-- Third Image -->
-                    <div v-if="!fileUrls[2]" class="col-lg-2 border p-2 rounded me-3 ms-2 d-flex justify-content-center align-items-center">
+                    <div v-if="!fileUrls[2]" class="col-lg-3 border p-2 rounded d-flex justify-content-center align-items-center">
                         <label for="fileInput2" class="d-flex justify-content-center align-items-center" style="cursor: pointer;">
                             <Icon icon="codicon:add" :style="{ fontSize: '48px'}" :ssr="true" />
                         </label>
                         <input type="file" id="fileInput2" class="d-none" @change="handleFileChange($event, 2)" />
                     </div>
-                    <div v-if="fileUrls[2]" class="col-lg-2 border p-2 rounded me-3 ms-2 d-flex justify-content-center align-items-center position-relative">
+                    <div v-if="fileUrls[2]" class="col-lg-3 border p-2 rounded d-flex justify-content-center align-items-center position-relative">
                         <img :src="fileUrls[2] ? fileUrls[2] : ''" alt="car image" style="width: 100%; height: auto;"/>
                         <div class="position-absolute bottom-0 end-0 mb-2 me-2">
                             <Icon icon="codicon:trash" :style="{ fontSize: '26px', cursor: 'pointer', color: '#FF0000' }" :ssr="true" @click="deleteFileFromMinIO(2)" />
@@ -265,30 +276,16 @@
                     </div>
 
                     <!-- Fourth Image -->
-                    <div v-if="!fileUrls[3]" class="col-lg-2 border p-2 rounded me-3 ms-2 d-flex justify-content-center align-items-center">
+                    <div v-if="!fileUrls[3]" class="col-lg-3 border p-2 rounded d-flex justify-content-center align-items-center">
                         <label for="fileInput3" class="d-flex justify-content-center align-items-center" style="cursor: pointer;">
                             <Icon icon="codicon:add" :style="{ fontSize: '48px'}" :ssr="true" />
                         </label>
                         <input type="file" id="fileInput3" class="d-none" @change="handleFileChange($event, 3)" />
                     </div>
-                    <div v-if="fileUrls[3]" class="col-lg-2 border p-2 rounded me-3 ms-2 d-flex justify-content-center align-items-center position-relative">
+                    <div v-if="fileUrls[3]" class="col-lg-3 border p-2 rounded d-flex justify-content-center align-items-center position-relative">
                         <img :src="fileUrls[3] ? fileUrls[3] : ''" alt="car image" style="width: 100%; height: auto;"/>
                         <div class="position-absolute bottom-0 end-0 mb-2 me-2">
                             <Icon icon="codicon:trash" :style="{ fontSize: '26px', cursor: 'pointer', color: '#FF0000' }" :ssr="true" @click="deleteFileFromMinIO(3)" />
-                        </div>
-                    </div>
-
-                    <!-- Fifth Image -->
-                    <div v-if="!fileUrls[4]" class="col-lg-2 border p-2 rounded me-3 ms-2 d-flex justify-content-center align-items-center">
-                        <label for="fileInput4" class="d-flex justify-content-center align-items-center" style="cursor: pointer;">
-                            <Icon icon="codicon:add" :style="{ fontSize: '48px'}" :ssr="true" />
-                        </label>
-                        <input type="file" id="fileInput4" class="d-none" @change="handleFileChange($event, 4)" />
-                    </div>
-                    <div v-if="fileUrls[4]" class="col-lg-2 border p-2 rounded me-3 ms-2 d-flex justify-content-center align-items-center position-relative">
-                        <img :src="fileUrls[4] ? fileUrls[4] : ''" alt="car image" style="width: 100%; height: auto;"/>
-                        <div class="position-absolute bottom-0 end-0 mb-2 me-2">
-                            <Icon icon="codicon:trash" :style="{ fontSize: '26px', cursor: 'pointer', color: '#FF0000' }" :ssr="true" @click="deleteFileFromMinIO(4)" />
                         </div>
                     </div>
                 </div>
