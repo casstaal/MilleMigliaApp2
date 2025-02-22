@@ -23,6 +23,11 @@ export default defineNuxtConfig({
       ErrorMessage: "VeeErrorMessage",
     },
   },
+
+  vite: {}, // Enables Vite
+  nitro: {
+    preset: 'node-server', // Ensures SSR runs correctly
+  },
   
   app: {
     head: {
