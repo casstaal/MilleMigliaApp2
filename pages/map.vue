@@ -53,6 +53,23 @@ onMounted(async () => {
   <div v-if="loading" class="loading-container">
     <p class="text-center fs-1">De kaart wordt geladen.....</p>
   </div>
+  <div class="dropdown d-flex justify-content-end mt-3 mb-3 me-3">
+    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+      Dropdown button
+    </button>
+    <ul class="dropdown-menu">
+      <div class="btn-group dropstart">
+        <li class="sub-menu2"><a href="#" class="dropdown-item dropdown-toggle our-pick-2" data-toggle="dropdown">Our Pick 2</a>
+          <ul class="dropdown-menu our-pick-menu">
+            <li><a href="2019.html" class="dropdown-item">2021</a></li>
+            <li><a href="2020.html" class="dropdown-item">2022</a></li>
+          </ul>
+        </li>
+      </div>
+      <li><a class="dropdown-item" href="#">Jaar</a></li>
+      <li><a class="dropdown-item" href="#">Gebruiker</a></li>
+    </ul>
+  </div>
   <div ref="mapContainer" class="map-container"></div>
 </template>
 
@@ -67,4 +84,13 @@ onMounted(async () => {
   height: 900px;
   border: 0px solid #fff;
 }
+
+.sub-menu:hover .games-menu {
+  display: block;
+}
+
+.sub-menu2:hover .our-pick-menu {
+  display: block;
+}
+
 </style>
