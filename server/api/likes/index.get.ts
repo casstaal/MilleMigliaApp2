@@ -2,10 +2,13 @@ import { getServerSession } from "#auth";
 
 export default defineEventHandler(async (event) => {
     const session = await getServerSession(event);
-    if(!session) {
+    console.log("Session:", session); 
+    
+    if (!session) {
         sendError(event, createError({ statusMessage: "Unauthenticated", statusCode: 401 }));
         return;
     }
+    
 
     const prisma = usePrisma();
     const userId = event.context.params?.id;
@@ -14,15 +17,13 @@ export default defineEventHandler(async (event) => {
         return createError({ statusCode: 400, message: "Invalid user id" });
     }
 
-    const user = await prisma.user.findUnique({
-        where: {
-            id: userId,
-        }
+    const likes = await prisma.like.findMany({
+        where: { userId },
     });
 
-    if (!user) {
-        return createError({ statusCode: 404, message: "User not found" });
+    if (!likes) {
+        return createError({ statusCode: 404, message: "Check not found" });
     }
 
-    return user;
+    return likes;
 })

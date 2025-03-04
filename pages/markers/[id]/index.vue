@@ -17,7 +17,7 @@
     const markerId = route.params.id;
 
     const { data: marker } = await useFetch<Marker>(`/api/markers/${markerId}`);
-    const user = await $fetch<User>(`/api/users/${marker?.value?.userId}`);
+    const user = await useFetch<User>(`/api/users/${marker?.value?.userId}`);
     const year = marker?.value?.date ? new Date(marker.value?.date).getFullYear() : "Invalid Date";
 
     if (marker?.value) {
@@ -334,7 +334,7 @@
                     <div class="row">
                         <div class="col-lg-7">
                             <p>
-                                Deze {{ marker?.brand }} {{ marker?.model }} is gefotografeerd door {{ user?.name }} tijdens de Mille Miglia van {{ year }}.
+                                Deze {{ marker?.brand }} {{ marker?.model }} is gefotografeerd door {{ user?.data?.value?.name }} tijdens de Mille Miglia van {{ year }}.
                             </p>
                         </div>
                         <div v-if="isEditing" class="col-lg-1">
@@ -357,7 +357,7 @@
                 </div>
             </div>
             <div>
-                <h4>Beschrijving {{ user?.name }}:</h4>
+                <h4>Beschrijving {{ user?.data?.value?.name }}:</h4>
                 <div v-if="isEditing">
                     <textarea 
                         class="w-100"

@@ -29,6 +29,9 @@
                     <li class="nav-item">
                         <a class="nav-link text-white" href="#">Dashboard</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/blog">Blog</a>
+                    </li>
                 </ul>
                 <div class="d-flex align-items-center justify-content-center">
                     <button class="btn-logout btn" @click="logout" style="background-color: #FF0000; color:white;">Logout</button>
