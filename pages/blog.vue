@@ -20,12 +20,10 @@
     }
 
     const isLiked = (postId: string) => {
-        if (!userLikes.data.value) return false;
         console.log("User Likes Data:", userLikes.data.value);
+        if (!userLikes.data.value) return false;
         return userLikes.data.value.some((like) => like.postId === postId);
     };
-
-
 
     const filteredPosts = computed(() => {
         let filtered = posts?.data?.value?.filter((post: any) => {
@@ -68,8 +66,34 @@
             return;
         }
 
-        navigateTo("/map");
+        window.location.reload();
     }
+
+    async function deleteLike(likeId: string | null) {
+        if (!likeId) return;
+
+        const response = await $fetch<Like>("api/likes", { method: "delete", body: { likeId } }).catch((e: FetchError) => {
+            errorMessage.value = e.data.message;
+            error.value = true;
+        });
+
+        if (error.value) {
+            return;
+        }
+
+        if (!response) {
+            errorMessage.value = "An error occurred";
+            error.value = true;
+            return;
+        }
+
+        window.location.reload();
+    }
+
+    const getLikeId = (postId: string) => {
+        const like = userLikes.data.value?.find((like) => like.postId === postId);
+        return like ? like.id : null;
+    };
 
     const schema = toTypedSchema(
         object({
@@ -185,7 +209,12 @@
                                             {{ post?.date ? new Date(post.date).toISOString().split('T')[0] : '' }}
                                         </div>
                                         <div class="col-2">
-                                            <Icon :icon="isLiked(post.id) ? 'codicon:heart-filled' : 'codicon:heart'" :style="{ fontSize: '26px', cursor: 'pointer', color: '#003366' }" :ssr="true" @click="likePost(post.id)" />
+                                            <div v-if="!isLiked(post.id)">
+                                                <Icon icon="codicon:heart" :style="{ fontSize: '26px', cursor: 'pointer', color: '#003366' }" :ssr="true" @click="likePost(post.id)" />
+                                            </div>
+                                            <div v-if="isLiked(post.id)">
+                                                <Icon icon="codicon:heart-filled" :style="{ fontSize: '26px', cursor: 'pointer', color: '#003366' }" :ssr="true" @click="deleteLike(getLikeId(post.id))" />
+                                            </div>
                                         </div>
                                         <div class="col-2">
                                             <Icon icon="codicon:bookmark" :style="{ fontSize: '26px', cursor: 'pointer', color: '#003366' }" :ssr="true" />

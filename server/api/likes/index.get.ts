@@ -9,13 +9,13 @@ export default defineEventHandler(async (event) => {
         return;
     }
     
-
     const prisma = usePrisma();
-    const userId = event.context.params?.id;
+    const userId = session.user.userId;
 
     if (!userId) {
         return createError({ statusCode: 400, message: "Invalid user id" });
     }
+
 
     const likes = await prisma.like.findMany({
         where: { userId },
