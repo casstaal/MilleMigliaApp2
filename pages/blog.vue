@@ -2,6 +2,9 @@
     import type { Like, Post } from "@prisma/client";
     import { Icon } from "@iconify/vue";
     import type { FetchError } from "ofetch";
+    import { toTypedSchema } from "@vee-validate/zod";
+    import { object, string, z } from "zod";
+
 
     const posts = await useFetch<Post[]>("/api/posts", {
         credentials: "include",
@@ -10,9 +13,14 @@
 
     const search = ref<string>("");
     const selectedFilter = ref<string>("");
+    const isAdding = ref(false);
+
+    function toggleAddMode() {
+        isAdding.value = !isAdding.value;
+    }
 
     const isLiked = (postId: string) => {
-        if (!userLikes.data.value) return false; // Handle null case
+        if (!userLikes.data.value) return false;
         console.log("User Likes Data:", userLikes.data.value);
         return userLikes.data.value.some((like) => like.postId === postId);
     };
@@ -63,6 +71,45 @@
         navigateTo("/map");
     }
 
+    const schema = toTypedSchema(
+        object({
+            title: string().min(1, { message: "Titel is verplicht"}),
+            link: string().min(1, { message: "Link is verplicht" }),
+            description: string().min(1, { message: "Beschrijving is verplicht" })
+        })
+    );
+
+    const { handleSubmit, errors } = useForm({
+        validationSchema: schema,
+    });
+
+    const { value: title } = useField("title");
+    const { value: link } = useField<string>("link");
+    const { value: description } = useField<string>("description");
+
+    async function createPost(values: any) {
+        const response = await $fetch<Post>("/api/posts", { method: "post", body: values }).catch((e: FetchError) => {
+            errorMessage.value = e.data.message;
+            error.value = true;
+        });
+
+        if (error.value) {
+            return;
+        }
+
+        if (!response) {
+            errorMessage.value = "An error occurred";
+            error.value = true;
+            return;
+        }
+
+        window.location.reload();
+    }
+
+    const onSubmit = handleSubmit(async (values) => {
+        createPost(values);
+    })
+
 </script>
 
 <template>
@@ -73,19 +120,53 @@
             <input class="form-control mb-3 mt-3 bg-white" type="text" v-model="search" placeholder="Search..." />
             <hr />
 
-            <div class="dropdown mt-3 mb-3 me-3">
-                <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #003366; color: white;">
-                    {{ filterButtonLabel }}
-                </button>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Meest geliked</a></li>
-                    <li><a class="dropdown-item" href="#">Meest opgeslagen</a></li>
-                    <li><a class="dropdown-item" href="#" @click.prevent="handleFilterSelect('old-new', 'Datum (oud-nieuw)')">Datum (oud-nieuw)</a></li>
-                    <li><a class="dropdown-item" href="#" @click.prevent="handleFilterSelect('new-old', 'Datum (nieuw-oud)')">Datum (nieuw-oud)</a></li>
-                </ul>
+            <div class="d-flex align-items-center mt-2 mb-2">
+                <div class="dropdown flex-grow-1">
+                    <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #003366; color: white;">
+                        {{ filterButtonLabel }}
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">Meest geliked</a></li>
+                        <li><a class="dropdown-item" href="#">Meest opgeslagen</a></li>
+                        <li><a class="dropdown-item" href="#" @click.prevent="handleFilterSelect('old-new', 'Datum (oud-nieuw)')">Datum (oud-nieuw)</a></li>
+                        <li><a class="dropdown-item" href="#" @click.prevent="handleFilterSelect('new-old', 'Datum (nieuw-oud)')">Datum (nieuw-oud)</a></li>
+                    </ul>
+                </div>
+                <div v-if="!isAdding" class="me-5">
+                    <button class="border-0 bg-transparent p-0">
+                        <Icon icon="codicon:add" :style="{ fontSize: '42px', cursor: 'pointer' }" :ssr="true" @click="toggleAddMode" />
+                    </button>
+                </div>
             </div>
-
             <div class="overflow-auto" style="max-height: 700px;">
+                <div v-if="isAdding" class="card p-3 shadow-sm mb-3 bg-white">
+                    <form @submit="onSubmit">
+                        <div class="row">
+                            <div class="card-body col-8">
+                                <div class="col-10">
+                                    <input class="w-100" style="font-size: 1.5rem;" v-model="title" placeholder="Titel">
+                                </div>
+                                <div class="col-12 mt-3">
+                                    <input class="w-100" v-model="link" type="text" placeholder="Link">
+                                </div>
+                                <div class="col-12 mt-3">
+                                    <textarea 
+                                        class="w-100"
+                                        type="text"
+                                        v-model="description"
+                                        placeholder="Beschrijving" 
+                                        cols="50"
+                                        rows="5">
+                                    </textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <button class="btn col-5 me-2" style="background-color: #003366; color: white;">Save</button>
+                            <button @click="toggleAddMode" class="btn col-5" style="background-color: #FF0000; color: white;">Cancel</button>     
+                        </div>
+                    </form>
+                </div>
                 <div v-if="filteredPosts?.length === 0" class="text-center text-muted p-3">
                     Geen posts gevonden
                 </div>
@@ -113,7 +194,7 @@
                                 </div>
                             </div>
                             <div class="col-12">
-                                <a href="{{ post.link }}" target="_blank">{{ post.link }}</a>
+                                <a :href="post.link" target="_blank">{{ post.link }}</a>
                             </div>
                             <div class="col-12 mt-3">
                                 {{ post.description }}
