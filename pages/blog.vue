@@ -11,23 +11,28 @@
     });
     const userLikes = await useFetch<Like[]>("/api/likes");
     const userSaves = await useFetch<Saved[]>("/api/saves");
+    const allLikes = await useFetch<Like[]>("/api/likes/all");
 
     const search = ref<string>("");
     const selectedFilter = ref<string>("new-old");
     const isAdding = ref(false);
+
+    const expandedPost: Record<string, boolean> = {};
+
+    function toggleDescription(postId: string) {
+        expandedPost[postId] = !expandedPost[postId];
+    }
 
     function toggleAddMode() {
         isAdding.value = !isAdding.value;
     }
 
     const isLiked = (postId: string) => {
-        console.log("User Likes Data:", userLikes.data.value);
         if (!userLikes.data.value) return false;
         return userLikes.data.value.some((like) => like.postId === postId);
     };
 
     const isSaved = (postId: string) => {
-        console.log("User saved Data:", userSaves.data.value);
         if (!userSaves.data.value) return false;
         return userSaves.data.value.some((save) => save.postId === postId);
     }
@@ -44,6 +49,8 @@
             filtered = filtered?.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
         } else if (selectedFilter.value === "saved") {
             filtered = filtered?.filter((post) => isSaved(post.id));
+        } else if (selectedFilter.value === "most-liked") {
+            filtered = filtered?.sort((a: any, b: any) => getPostLikeNumber(b.id) - getPostLikeNumber(a.id));
         }
 
         return filtered;
@@ -139,6 +146,10 @@
         window.location.reload();
     }
     
+    const getPostLikeNumber = (postId: string) => {
+        if (!allLikes.data.value) return 0;
+        return allLikes.data.value.filter((like) => like.postId === postId).length;
+    }
 
     const getLikeId = (postId: string) => {
         const like = userLikes.data.value?.find((like) => like.postId === postId);
@@ -205,7 +216,7 @@
                         {{ filterButtonLabel }}
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Meest geliked</a></li>
+                        <li><a class="dropdown-item" href="#" @click.prevent="handleFilterSelect('most-liked', 'Meest geliked')">Meest geliked</a></li>
                         <li><a class="dropdown-item" href="#" @click.prevent="handleFilterSelect('saved', 'Opgeslagen')">Opgeslagen</a></li>
                         <li><a class="dropdown-item" href="#" @click.prevent="handleFilterSelect('old-new', 'Datum (oud-nieuw)')">Datum (oud-nieuw)</a></li>
                         <li><a class="dropdown-item" href="#" @click.prevent="handleFilterSelect('new-old', 'Datum (nieuw-oud)')">Datum (nieuw-oud)</a></li>
@@ -259,27 +270,27 @@
                                     </h3>
                                 </div>
                                 <div class="col-2">
-                                    <div class="row">
-                                        <div class="col-7">
+                                    <div class="row align-items-center gx-0">
+                                        <div class="col-auto">
                                             {{ post?.date ? new Date(post.date).toISOString().split('T')[0] : '' }}
                                         </div>
-                                        <div class="col-2">
-                                            <div v-if="!isLiked(post.id)">
-                                                <p>5</p>
-                                                <Icon icon="codicon:heart" :style="{ fontSize: '26px', cursor: 'pointer', color: 'black' }" :ssr="true" @click="likePost(post.id)" />
-                                            </div>
-                                            <div v-if="isLiked(post.id)">
-                                                <p>5</p>
-                                                <Icon icon="codicon:heart-filled" :style="{ fontSize: '26px', cursor: 'pointer', color: '#FF0000' }" :ssr="true" @click="deleteLike(getLikeId(post.id))" />
-                                            </div>
+                                        <div class="col-auto d-flex align-items-center ms-3">
+                                            <span class="fs-5" style="margin-bottom: 2px;">{{ getPostLikeNumber(post.id) }}</span>
+                                            <Icon 
+                                                v-if="isLiked(post.id) !== null" 
+                                                :icon="isLiked(post.id) ? 'codicon:heart-filled' : 'codicon:heart'" 
+                                                :style="{ fontSize: '26px', cursor: 'pointer', color: isLiked(post.id) ? '#FF0000' : 'black' }" 
+                                                :ssr="true" 
+                                                @click="isLiked(post.id) ? deleteLike(getLikeId(post.id)) : likePost(post.id)" 
+                                            />
                                         </div>
-                                        <div class="col-2">
-                                            <div v-if="!isSaved(post.id)">
-                                                <Icon icon="material-symbols:bookmark-outline" :style="{ fontSize: '26px', cursor: 'pointer', color: 'black' }" :ssr="true" @click="savePost(post.id)" />
-                                            </div>
-                                            <div v-if="isSaved(post.id)">
-                                                <Icon icon="material-symbols:bookmark" :style="{ fontSize: '26px', cursor: 'pointer', color: '#003366' }" :ssr="true" @click="deletePost(getSaveId(post.id))" />
-                                            </div>
+                                        <div class="col-auto d-flex align-items-center">
+                                            <Icon 
+                                                :icon="isSaved(post.id) ? 'material-symbols:bookmark' : 'material-symbols:bookmark-outline'" 
+                                                :style="{ fontSize: '26px', cursor: 'pointer', color: isSaved(post.id) ? '#003366' : 'black' }" 
+                                                :ssr="true" 
+                                                @click="isSaved(post.id) ? deletePost(getSaveId(post.id)) : savePost(post.id)" 
+                                            />
                                         </div>
                                     </div>
                                 </div>
@@ -288,7 +299,19 @@
                                 <a :href="post.link" target="_blank">{{ post.link }}</a>
                             </div>
                             <div class="col-12 mt-3">
-                                {{ post.description }}
+                                    <p v-if="!expandedPost[post.id]">
+                                        {{ post.description.length > 100 ? post.description.substring(0, 100) + '...' : post.description }}
+                                    </p>
+                                    <p v-else>
+                                        {{ post.description }}
+                                    </p>
+                                    
+                                    <button @click="toggleDescription(post.id)" class="btn btn-link p-0">
+                                        {{ expandedPost[post.id] ? 'Show less' : 'Show more' }}
+                                    </button>                            
+                            </div>
+                            <div class="col-auto">
+                                Cas Staal
                             </div>
                         </div>
                     </div>
