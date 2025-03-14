@@ -13,6 +13,23 @@
     const userSaves = await useFetch<Saved[]>("/api/saves");
     const allLikes = await useFetch<Like[]>("/api/likes/all");
 
+    const isEditing = ref(false); 
+    const isSelected = ref(false);
+    const selectedPostId = ref<string | null>(null);
+
+    function changeBorderColor(postId: string) {
+        selectedPostId.value = postId; // Update the selected post ID
+    }
+
+    function toggleSelectMode(postId: string) {
+        isSelected.value = !isSelected.value;
+        changeBorderColor(postId);
+    }
+
+    function toggleEditMode() {
+        isEditing.value = !isEditing.value;
+    }
+
     const search = ref<string>("");
     const selectedFilter = ref<string>("new-old");
     const isAdding = ref(false);
@@ -106,7 +123,7 @@
         window.location.reload();
     }
 
-    async function savePost(postId: string) {
+    async function saveSave(postId: string) {
         const response = await $fetch<Saved>("api/saves", { method: "post", body: { postId } }).catch((e: FetchError) => {
             errorMessage.value = e.data.message;
             error.value = true;
@@ -125,7 +142,7 @@
         window.location.reload();
     }
 
-    async function deletePost(saveId: string | null) {
+    async function deleteSave(saveId: string | null) {
         if (!saveId) return;
 
         const response = await $fetch<Saved>("api/saves", { method: "delete", body: { saveId } }).catch((e: FetchError) => {
@@ -144,6 +161,34 @@
         }
 
         window.location.reload();
+    }
+
+    async function deletePost() {
+        const postId = selectedPostId.value;
+        const response = await $fetch<Post>(`/api/posts/`, { method: "delete", body: { postId }}).catch((e: FetchError) => {
+            errorMessage.value = e.data.message;
+            error.value = true;
+        });
+
+        if (error.value) {
+            return;
+        }
+
+        if (!response) {
+            errorMessage.value = "An error occurred";
+            error.value = true;
+            return;
+        }
+
+        window.location.reload();
+    }
+
+    async function confirmDelete() {
+        const userConfirmed = confirm("Weet je zeker dat je deze post wilt verwijderen?");
+
+        if (userConfirmed) {
+            await deletePost();
+        }
     }
     
     const getPostLikeNumber = (postId: string) => {
@@ -199,7 +244,6 @@
     const onSubmit = handleSubmit(async (values) => {
         createPost(values);
     })
-
 </script>
 
 <template>
@@ -221,6 +265,14 @@
                         <li><a class="dropdown-item" href="#" @click.prevent="handleFilterSelect('old-new', 'Datum (oud-nieuw)')">Datum (oud-nieuw)</a></li>
                         <li><a class="dropdown-item" href="#" @click.prevent="handleFilterSelect('new-old', 'Datum (nieuw-oud)')">Datum (nieuw-oud)</a></li>
                     </ul>
+                </div>
+                <div v-if="isSelected">
+                    <button class="btn col-6" style="background-color: #003366; color: white;" @click="toggleEditMode()">
+                        Edit
+                    </button>
+                    <button class="btn col-6" style="background-color: #FF0000; color: white;" @click="confirmDelete()">
+                        Delete
+                    </button>
                 </div>
                 <div v-if="!isAdding" class="me-5">
                     <button class="border-0 bg-transparent p-0">
@@ -260,13 +312,18 @@
                 <div v-if="filteredPosts?.length === 0" class="text-center text-muted p-3">
                     Geen posts gevonden
                 </div>
-                <div v-for="post in filteredPosts" :key="post.id" class="card p-3 shadow-sm mb-3 bg-white">
+                <div v-for="post in filteredPosts" :key="post.id" class="card p-3 shadow-sm mb-3 bg-white" :class="{ 'selected': selectedPostId === post.id }" @click="toggleSelectMode(post.id)">
                     <div class="row">
                         <div class="card-body col-8">
                             <div class="row">
-                                <div class="col-10">
+                                <div v-if="!(isEditing && post.id === selectedPostId)" class="col-10">
                                     <h3>
                                         {{ post.title }}
+                                    </h3>
+                                </div>
+                                <div v-if="(isEditing && post.id === selectedPostId)" class="col-10">
+                                    <h3>
+                                        <input class="w-100" style="font-size: 1.5rem;" v-model="title" placeholder="Titel">
                                     </h3>
                                 </div>
                                 <div class="col-2">
@@ -289,16 +346,19 @@
                                                 :icon="isSaved(post.id) ? 'material-symbols:bookmark' : 'material-symbols:bookmark-outline'" 
                                                 :style="{ fontSize: '26px', cursor: 'pointer', color: isSaved(post.id) ? '#003366' : 'black' }" 
                                                 :ssr="true" 
-                                                @click="isSaved(post.id) ? deletePost(getSaveId(post.id)) : savePost(post.id)" 
+                                                @click="isSaved(post.id) ? deleteSave(getSaveId(post.id)) : saveSave(post.id)" 
                                             />
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-12">
+                            <div v-if="!(isEditing && post.id === selectedPostId)" class="col-12">
                                 <a :href="post.link" target="_blank">{{ post.link }}</a>
                             </div>
-                            <div class="col-12 mt-3">
+                            <div v-if="(isEditing && post.id === selectedPostId)" class="col-12">
+                                <input class="w-100" v-model="link" type="text" placeholder="Link">
+                            </div>
+                            <div v-if="!(isEditing && post.id === selectedPostId)" class="col-12 mt-3">
                                     <p v-if="!expandedPost[post.id]">
                                         {{ post.description.length > 100 ? post.description.substring(0, 100) + '...' : post.description }}
                                     </p>
@@ -309,6 +369,16 @@
                                     <button @click="toggleDescription(post.id)" class="btn btn-link p-0">
                                         {{ expandedPost[post.id] ? 'Show less' : 'Show more' }}
                                     </button>                            
+                            </div>
+                            <div v-if="(isEditing && post.id === selectedPostId)" class="col-12 mt-3">
+                                <textarea 
+                                        class="w-100"
+                                        type="text"
+                                        v-model="description"
+                                        placeholder="Beschrijving" 
+                                        cols="50"
+                                        rows="5">
+                                </textarea>                    
                             </div>
                             <div class="col-auto">
                                 Cas Staal
@@ -326,5 +396,9 @@
     .row {
         margin-right: 0;
         overflow-x: hidden; 
+    }
+
+    .selected {
+        border: 2px solid #003366 !important;
     }
 </style>
