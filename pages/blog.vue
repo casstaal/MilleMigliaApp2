@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import type { Like, Post } from "@prisma/client";
+    import { type Saved, type Like, type Post } from "@prisma/client";
     import { Icon } from "@iconify/vue";
     import type { FetchError } from "ofetch";
     import { toTypedSchema } from "@vee-validate/zod";
@@ -10,9 +10,10 @@
         credentials: "include",
     });
     const userLikes = await useFetch<Like[]>("/api/likes");
+    const userSaves = await useFetch<Saved[]>("/api/saves");
 
     const search = ref<string>("");
-    const selectedFilter = ref<string>("");
+    const selectedFilter = ref<string>("new-old");
     const isAdding = ref(false);
 
     function toggleAddMode() {
@@ -25,6 +26,12 @@
         return userLikes.data.value.some((like) => like.postId === postId);
     };
 
+    const isSaved = (postId: string) => {
+        console.log("User saved Data:", userSaves.data.value);
+        if (!userSaves.data.value) return false;
+        return userSaves.data.value.some((save) => save.postId === postId);
+    }
+
     const filteredPosts = computed(() => {
         let filtered = posts?.data?.value?.filter((post: any) => {
             const query = search.value.toLowerCase();
@@ -35,6 +42,8 @@
             filtered = filtered?.sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime());
         } else if (selectedFilter.value === "new-old") {
             filtered = filtered?.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        } else if (selectedFilter.value === "saved") {
+            filtered = filtered?.filter((post) => isSaved(post.id));
         }
 
         return filtered;
@@ -45,7 +54,7 @@
         filterButtonLabel.value = label; 
     };
 
-    const filterButtonLabel = ref("Filter"); 
+    const filterButtonLabel = ref("Datum (nieuw-oud)"); 
 
     const errorMessage = ref("");
     const error = ref(false);
@@ -90,9 +99,55 @@
         window.location.reload();
     }
 
+    async function savePost(postId: string) {
+        const response = await $fetch<Saved>("api/saves", { method: "post", body: { postId } }).catch((e: FetchError) => {
+            errorMessage.value = e.data.message;
+            error.value = true;
+        });
+
+        if (error.value) {
+            return;
+        }
+
+        if (!response) {
+            errorMessage.value = "An error occurred";
+            error.value = true;
+            return;
+        }
+
+        window.location.reload();
+    }
+
+    async function deletePost(saveId: string | null) {
+        if (!saveId) return;
+
+        const response = await $fetch<Saved>("api/saves", { method: "delete", body: { saveId } }).catch((e: FetchError) => {
+            errorMessage.value = e.data.message;
+            error.value = true;
+        });
+
+        if (error.value) {
+            return;
+        }
+
+        if (!response) {
+            errorMessage.value = "An error occurred";
+            error.value = true;
+            return;
+        }
+
+        window.location.reload();
+    }
+    
+
     const getLikeId = (postId: string) => {
         const like = userLikes.data.value?.find((like) => like.postId === postId);
         return like ? like.id : null;
+    };
+
+    const getSaveId = (postId: string) => {
+        const save = userSaves.data.value?.find((save) => save.postId === postId);
+        return save ? save.id : null;
     };
 
     const schema = toTypedSchema(
@@ -151,7 +206,7 @@
                     </button>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="#">Meest geliked</a></li>
-                        <li><a class="dropdown-item" href="#">Meest opgeslagen</a></li>
+                        <li><a class="dropdown-item" href="#" @click.prevent="handleFilterSelect('saved', 'Opgeslagen')">Opgeslagen</a></li>
                         <li><a class="dropdown-item" href="#" @click.prevent="handleFilterSelect('old-new', 'Datum (oud-nieuw)')">Datum (oud-nieuw)</a></li>
                         <li><a class="dropdown-item" href="#" @click.prevent="handleFilterSelect('new-old', 'Datum (nieuw-oud)')">Datum (nieuw-oud)</a></li>
                     </ul>
@@ -210,14 +265,21 @@
                                         </div>
                                         <div class="col-2">
                                             <div v-if="!isLiked(post.id)">
-                                                <Icon icon="codicon:heart" :style="{ fontSize: '26px', cursor: 'pointer', color: '#003366' }" :ssr="true" @click="likePost(post.id)" />
+                                                <p>5</p>
+                                                <Icon icon="codicon:heart" :style="{ fontSize: '26px', cursor: 'pointer', color: 'black' }" :ssr="true" @click="likePost(post.id)" />
                                             </div>
                                             <div v-if="isLiked(post.id)">
-                                                <Icon icon="codicon:heart-filled" :style="{ fontSize: '26px', cursor: 'pointer', color: '#003366' }" :ssr="true" @click="deleteLike(getLikeId(post.id))" />
+                                                <p>5</p>
+                                                <Icon icon="codicon:heart-filled" :style="{ fontSize: '26px', cursor: 'pointer', color: '#FF0000' }" :ssr="true" @click="deleteLike(getLikeId(post.id))" />
                                             </div>
                                         </div>
                                         <div class="col-2">
-                                            <Icon icon="codicon:bookmark" :style="{ fontSize: '26px', cursor: 'pointer', color: '#003366' }" :ssr="true" />
+                                            <div v-if="!isSaved(post.id)">
+                                                <Icon icon="material-symbols:bookmark-outline" :style="{ fontSize: '26px', cursor: 'pointer', color: 'black' }" :ssr="true" @click="savePost(post.id)" />
+                                            </div>
+                                            <div v-if="isSaved(post.id)">
+                                                <Icon icon="material-symbols:bookmark" :style="{ fontSize: '26px', cursor: 'pointer', color: '#003366' }" :ssr="true" @click="deletePost(getSaveId(post.id))" />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
