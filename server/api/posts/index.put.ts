@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
 
     const prisma = usePrisma();
     const body = await readBody(event);
-    const postId = body.postId;
+    const postId = body.id;
 
     return await prisma.post.update({
         where: {

@@ -17,16 +17,27 @@
     const isSelected = ref(false);
     const selectedPostId = ref<string | null>(null);
 
-    function changeBorderColor(postId: string) {
-        selectedPostId.value = postId; // Update the selected post ID
-    }
+    const editablePost = ref<Post>({
+        id: '', title: '', link: '', description: '', date: new Date(), userId: ''
+    });
 
     function toggleSelectMode(postId: string) {
-        isSelected.value = !isSelected.value;
-        changeBorderColor(postId);
+        if (selectedPostId.value === postId) {
+            selectedPostId.value = null;
+            isSelected.value = false;
+        } else {
+            selectedPostId.value = postId;
+            isSelected.value = true;
+        }
     }
 
-    function toggleEditMode() {
+    function toggleEditMode(post?: Post) {
+        if (!isEditing.value) {
+            const post = filteredPosts.value?.find(p => p.id === selectedPostId.value);
+            if (post) {
+                editablePost.value = { ...post };
+            }
+        }
         isEditing.value = !isEditing.value;
     }
 
@@ -244,6 +255,27 @@
     const onSubmit = handleSubmit(async (values) => {
         createPost(values);
     })
+
+    async function updatePost() {
+        console.log("Editable Post:", editablePost.value);
+
+        const response = await $fetch<Post>(`/api/posts`, { method: "put", body: editablePost.value }).catch((e: FetchError) => {
+            errorMessage.value = e.data.message;
+            error.value = true;
+        });
+
+        if (error.value) {
+            return;
+        }
+
+        if (!response) {
+            errorMessage.value = "An error occurred";
+            error.value = true;
+            return;
+        }
+
+        window.location.reload();
+    }
 </script>
 
 <template>
@@ -266,13 +298,23 @@
                         <li><a class="dropdown-item" href="#" @click.prevent="handleFilterSelect('new-old', 'Datum (nieuw-oud)')">Datum (nieuw-oud)</a></li>
                     </ul>
                 </div>
-                <div v-if="isSelected">
-                    <button class="btn col-6" style="background-color: #003366; color: white;" @click="toggleEditMode()">
-                        Edit
-                    </button>
-                    <button class="btn col-6" style="background-color: #FF0000; color: white;" @click="confirmDelete()">
-                        Delete
-                    </button>
+                <div v-if="isSelected" class="me-3">
+                    <div v-if="!isEditing">
+                        <button class="btn col-6" style="background-color: #003366; color: white;" @click="toggleEditMode()">
+                            Edit
+                        </button>
+                        <button class="btn col-6 pe-4" style="background-color: #FF0000; color: white;" @click="confirmDelete()">
+                            Delete
+                        </button>
+                    </div>
+                    <div v-if="isEditing">
+                        <button class="btn col-6" style="background-color: #003366; color: white;" @click="updatePost">
+                            Save
+                        </button>
+                        <button class="btn col-6 pe-4" style="background-color: #FF0000; color: white;" @click="toggleEditMode()">
+                            Cancel
+                        </button>
+                    </div>
                 </div>
                 <div v-if="!isAdding" class="me-5">
                     <button class="border-0 bg-transparent p-0">
@@ -312,7 +354,7 @@
                 <div v-if="filteredPosts?.length === 0" class="text-center text-muted p-3">
                     Geen posts gevonden
                 </div>
-                <div v-for="post in filteredPosts" :key="post.id" class="card p-3 shadow-sm mb-3 bg-white" :class="{ 'selected': selectedPostId === post.id }" @click="toggleSelectMode(post.id)">
+                <div v-for="post in filteredPosts" :key="post.id" class="card p-3 shadow-sm mb-3 bg-white" :class="{ 'selected': selectedPostId === post.id }" @click="!isEditing && toggleSelectMode(post.id)">
                     <div class="row">
                         <div class="card-body col-8">
                             <div class="row">
@@ -323,7 +365,7 @@
                                 </div>
                                 <div v-if="(isEditing && post.id === selectedPostId)" class="col-10">
                                     <h3>
-                                        <input class="w-100" style="font-size: 1.5rem;" v-model="title" placeholder="Titel">
+                                        <input class="w-100" style="font-size: 1.5rem;" v-model="editablePost.title" placeholder="Titel">
                                     </h3>
                                 </div>
                                 <div class="col-2">
@@ -356,11 +398,11 @@
                                 <a :href="post.link" target="_blank">{{ post.link }}</a>
                             </div>
                             <div v-if="(isEditing && post.id === selectedPostId)" class="col-12">
-                                <input class="w-100" v-model="link" type="text" placeholder="Link">
+                                <input class="w-100" v-model="editablePost.link" type="text" placeholder="Link">
                             </div>
                             <div v-if="!(isEditing && post.id === selectedPostId)" class="col-12 mt-3">
                                     <p v-if="!expandedPost[post.id]">
-                                        {{ post.description.length > 100 ? post.description.substring(0, 100) + '...' : post.description }}
+                                        {{ post.description.length > 100 ? post.description.substring(0, 370) + '...' : post.description }}
                                     </p>
                                     <p v-else>
                                         {{ post.description }}
@@ -374,7 +416,7 @@
                                 <textarea 
                                         class="w-100"
                                         type="text"
-                                        v-model="description"
+                                        v-model="editablePost.description"
                                         placeholder="Beschrijving" 
                                         cols="50"
                                         rows="5">
