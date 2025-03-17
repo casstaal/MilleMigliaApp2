@@ -401,16 +401,16 @@
                                 <input class="w-100" v-model="editablePost.link" type="text" placeholder="Link">
                             </div>
                             <div v-if="!(isEditing && post.id === selectedPostId)" class="col-12 mt-3">
-                                    <p v-if="!expandedPost[post.id]">
-                                        {{ post.description.length > 100 ? post.description.substring(0, 370) + '...' : post.description }}
-                                    </p>
-                                    <p v-else>
-                                        {{ post.description }}
-                                    </p>
-                                    
-                                    <button @click="toggleDescription(post.id)" class="btn btn-link p-0">
-                                        {{ expandedPost[post.id] ? 'Show less' : 'Show more' }}
-                                    </button>                            
+                                <p v-if="!expandedPost[post.id]">
+                                    {{ post.description.length > 370 ? post.description.substring(0, 370) + '...' : post.description }}
+                                </p>
+                                <p v-else>
+                                    {{ post.description }}
+                                </p>
+
+                                <button v-if="post.description.length > 370" @click="toggleDescription(post.id)" class="btn btn-link p-0">
+                                    {{ expandedPost[post.id] ? 'Show less' : 'Show more' }}
+                                </button>
                             </div>
                             <div v-if="(isEditing && post.id === selectedPostId)" class="col-12 mt-3">
                                 <textarea 
