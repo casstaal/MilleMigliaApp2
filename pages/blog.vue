@@ -4,7 +4,10 @@
     import type { FetchError } from "ofetch";
     import { toTypedSchema } from "@vee-validate/zod";
     import { object, string, z } from "zod";
+    import { useRoute, useRouter } from "vue-router";
 
+    const route = useRoute();
+    const router = useRouter();
 
     const posts = await useFetch<Post[]>("/api/posts", {
         credentials: "include",
@@ -15,19 +18,49 @@
 
     const isEditing = ref(false); 
     const isSelected = ref(false);
-    const selectedPostId = ref<string | null>(null);
+    const selectedPostId = ref<string | null>(null)
 
     const editablePost = ref<Post>({
         id: '', title: '', link: '', description: '', date: new Date(), userId: ''
     });
 
+    const postRefs = ref<Record<string, HTMLElement | null>>({})
+
+    // Scroll to the post when needed
+    const scrollToPost = (postId: string) => {
+    nextTick(() => {
+        const postElement = postRefs.value[postId]
+        if (postElement) {
+        postElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        }
+    })
+    }
+
+    // Watch for changes in postId and scroll
+    watch(() => route.query.postId, (newPostId) => {
+    const postId = Array.isArray(newPostId) ? newPostId[0] : newPostId || null
+    selectedPostId.value = postId
+    if (postId) scrollToPost(postId)
+    })
+
+    // Scroll to post on page load
+    onMounted(() => {
+    const postId = Array.isArray(route.query.postId) ? route.query.postId[0] : route.query.postId || null
+    if (postId) {
+        selectedPostId.value = postId
+        scrollToPost(postId)
+    }
+    })
+
     function toggleSelectMode(postId: string) {
         if (selectedPostId.value === postId) {
             selectedPostId.value = null;
             isSelected.value = false;
+            router.push({ query: {} });
         } else {
             selectedPostId.value = postId;
             isSelected.value = true;
+            router.push({ query: { postId } }); 
         }
     }
 
@@ -354,7 +387,7 @@
                 <div v-if="filteredPosts?.length === 0" class="text-center text-muted p-3">
                     Geen posts gevonden
                 </div>
-                <div v-for="post in filteredPosts" :key="post.id" class="card p-3 shadow-sm mb-3 bg-white" :class="{ 'selected': selectedPostId === post.id }" @click="!isEditing && toggleSelectMode(post.id)">
+                <div v-for="post in filteredPosts" :key="post.id" class="card p-3 shadow-sm mb-3 bg-white" :class="{ 'selected': selectedPostId === post.id }" :ref="el => postRefs[post.id] = el as HTMLElement" @click="!isEditing && toggleSelectMode(post.id)">
                     <div class="row">
                         <div class="card-body col-8">
                             <div class="row">

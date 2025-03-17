@@ -1,8 +1,8 @@
 <script setup lang="ts">
     import { type Marker, type Post } from "@prisma/client";
 
-    const markers = await useFetch<Marker[]>("/api/markers");
-    const posts = await useFetch<Post[]>("/api/posts", {
+    const { data: markers } = await useFetch<Marker[]>("/api/markers");
+    const { data: posts } = await useFetch<Post[]>("/api/posts", {
         credentials: "include",
     });
 </script>
@@ -27,8 +27,35 @@
         <div class="col-3"></div>
     </div>
     <div class="row bg-light">
-        <div v-for="marker in markers" :key="marker.id" class>
+        <h1 class="text-center">Markers</h1>
+        <div v-for="marker in markers" :key="marker.id">
 
         </div>
+    </div>
+    <div class="row mt-5">
+        <div class="col-3"></div>
+        <div class="col-6 mb-5">
+            <h1>Posts</h1>
+            <NuxtLink to="/blog" class="start-button btn mt-4" style="background-color: #003366; color:white;">Zie alle posts</NuxtLink>
+            <hr />
+
+            <div class="row">
+                <div v-for="post in posts?.slice(0, 4)" :key="post.id" class="col-3 border card p-3 shadow-sm mb-3 bg-white">
+                    <h3>{{ post.title }}</h3>
+                    <div class="d-flex justify-content-between mb-2">
+                        <p class="mb-0">Cas Staal</p>
+                        <p class="mb-0">{{ post?.date ? new Date(post.date).toISOString().split('T')[0] : '' }}</p>
+                    </div>
+                    <p v-if="post.description.length > 100">
+                        {{ post.description.substring(0, 100) + '...' }}
+                    </p>
+                    <p v-else>
+                        {{ post.description }}
+                    </p>
+                    <NuxtLink :to="`/blog?postId=${post.id}`" class="start-button btn mt-4" style="background-color: #003366; color:white; margin-top: auto;">Read more</NuxtLink>
+                </div>
+            </div>
+        </div>
+        <div class="col-3"></div>
     </div>
 </template>
