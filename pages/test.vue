@@ -1,9 +1,43 @@
 <script setup lang="ts">
     import { type Marker, type Post } from "@prisma/client";
+    import { ref, onMounted, onUnmounted } from "vue";
 
     const { data: markers } = await useFetch<Marker[]>("/api/markers");
     const { data: posts } = await useFetch<Post[]>("/api/posts", {
         credentials: "include",
+    });
+
+    const countdown = ref("Loading...");
+
+    function startCountdown(targetDate: Date) {
+    function updateTimer() {
+        const now = new Date().getTime();
+        const timeLeft = targetDate.getTime() - now;
+
+        if (timeLeft > 0) {
+        const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+        countdown.value = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+        } else {
+        countdown.value = "The race has started!";
+        clearInterval(timerInterval);
+        }
+    }
+
+        updateTimer();
+        const timerInterval = setInterval(updateTimer, 1000);
+
+        onUnmounted(() => {
+            clearInterval(timerInterval);
+        });
+    }
+
+    onMounted(() => {
+        const raceDate = new Date("2025-06-17T00:00:00");
+        startCountdown(raceDate);
     });
 </script>
 
@@ -26,17 +60,44 @@
         </div>
         <div class="col-3"></div>
     </div>
-    <div class="row bg-light">
-        <h1 class="text-center">Markers</h1>
-        <div v-for="marker in markers" :key="marker.id">
-
+    <div class="row bg-light-subtle pt-5 pb-5">
+        <div class="row">
+            <div class="col-3"></div>
+            <div class="col-6 d-flex align-items-center p-3" style="background-color: #003366;">
+                <div class="col-6">
+                    <img src="/IMG_4103.jpg" alt="aston martin db2" style="height: auto; width: 100%;">
+                </div>
+                <div class="col-6">
+                    <div class="text-white text-center">
+                        <h6 style="color: #FF0000;"><b>NEXT RACE</b></h6>
+                        <h1>1000 Miglia</h1>
+                        <h5>{{ countdown }}</h5>
+                        <a href="https://1000miglia.it/en/events/1000-miglia/1000-miglia-2025/" target="_blank">
+                            <button class="btn" type="button" style="background-color: #FF0000; color: white;"><b>SEE THE EVENT ></b></button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-5">
+            <div class="col-3"></div>
+            <div class="col-6">
+                <div class="row">
+                    <div class="col-5 p-3" style="background-color: #003366; margin-right: 10px;">
+                        <img src="/IMG_4034.jpg" alt="aston martin db2" style="height: auto; width: 100%;">
+                    </div>
+                    <div class="col-5 p-3" style="background-color: #003366; margin-left: 10px;">
+                        <img src="/IMG_4165.jpg" alt="aston martin db2" style="height: auto; width: 100%;">
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <div class="row mt-5">
         <div class="col-3"></div>
         <div class="col-6 mb-5">
             <h1>Posts</h1>
-            <NuxtLink to="/blog" class="start-button btn mt-4" style="background-color: #003366; color:white;">Zie alle posts</NuxtLink>
+            <!-- <NuxtLink to="/blog" class="start-button btn mt-4" style="background-color: #003366; color:white;">Zie alle posts</NuxtLink> -->
             <hr />
 
             <div class="row">
