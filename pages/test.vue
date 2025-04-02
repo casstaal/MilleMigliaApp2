@@ -8,6 +8,7 @@
         credentials: "include",
     });
 
+    const selected = ref<string>("foto");
     const countdown = ref("Loading...");
 
     function startCountdown(targetDate: Date) {
@@ -90,24 +91,6 @@
                         <a href="https://1000miglia.it/en/events/1000-miglia/1000-miglia-2025/" target="_blank">
                             <button class="btn" type="button" style="background-color: #FF0000; color: white;"><b>SEE THE EVENT ></b></button>
                         </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row mt-5">
-            <div class="col-3"></div>
-            <div class="col-6">
-                <div class="row">
-                    <div class="row col-6" style="margin-right: 12px;">
-                        <div class="col-12 p-3" style="background-color: #003366;">
-                            <img src="/IMG_5676.jpg" alt="aston martin db2" style="height: auto; width: 100%;">
-                        </div>
-                        <div class="col-12 ps-3 pe-3 pb-3" style="background-color: #003366;">
-                            <img src="/IMG_5676.jpg" alt="aston martin db2" style="height: auto; width: 100%;">
-                        </div>
-                    </div>
-                    <div class="col-6 p-3" style="background-color: #003366;">
-                        <img src="/IMG_5673.jpg" alt="aston martin db2" style="height: auto; width: 100%;">
                     </div>
                 </div>
             </div>
