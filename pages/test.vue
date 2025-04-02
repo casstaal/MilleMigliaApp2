@@ -1,6 +1,7 @@
 <script setup lang="ts">
     import { type Marker, type Post } from "@prisma/client";
     import { ref, onMounted, onUnmounted } from "vue";
+    import { Icon } from "@iconify/vue";
 
     const { data: markers } = await useFetch<Marker[]>("/api/markers");
     const { data: posts } = await useFetch<Post[]>("/api/posts", {
@@ -39,15 +40,29 @@
         const raceDate = new Date("2025-06-17T00:00:00");
         startCountdown(raceDate);
     });
+
+    const scrollToContent = () => {
+        const content = document.querySelector(".home-sec-intro");
+        if (content) {
+            content.scrollIntoView({ behavior: "smooth" });
+        }
+    };
 </script>
 
 <template>
-    <video width="100%" height="auto" autoplay muted loop playsinline>
-        <source src="/IMG_4175.MOV" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
+    <div class="video-container">
+        <video width="100%" height="auto" autoplay muted loop playsinline>
+            <source src="/IMG_4175.MOV" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div>
+            <button class="scroll-to sprite-before" @click="scrollToContent">
+                <Icon icon="codicon:arrow-circle-down" :style="{ fontSize: '48px'}" :ssr="true" />
+            </button>
+        </div>
+    </div>
 
-    <div class="row">
+    <div class="row home-sec-intro mt-4 mb-4">
         <div class="col-3"></div>
         <div class="col-6 p-5 rounded-3">
             <h1 class="text-center">1000 Miglia, the most beautiful race in the world</h1>
@@ -65,7 +80,7 @@
             <div class="col-3"></div>
             <div class="col-6 d-flex align-items-center p-3" style="background-color: #003366;">
                 <div class="col-6">
-                    <img src="/IMG_4103.jpg" alt="aston martin db2" style="height: auto; width: 100%;">
+                    <img src="/IMG_5676.jpg" alt="aston martin db2" style="height: auto; width: 100%;">
                 </div>
                 <div class="col-6">
                     <div class="text-white text-center">
@@ -83,14 +98,24 @@
             <div class="col-3"></div>
             <div class="col-6">
                 <div class="row">
-                    <div class="col-5 p-3" style="background-color: #003366; margin-right: 10px;">
-                        <img src="/IMG_4034.jpg" alt="aston martin db2" style="height: auto; width: 100%;">
+                    <div class="row col-6" style="margin-right: 12px;">
+                        <div class="col-12 p-3" style="background-color: #003366;">
+                            <img src="/IMG_5676.jpg" alt="aston martin db2" style="height: auto; width: 100%;">
+                        </div>
+                        <div class="col-12 ps-3 pe-3 pb-3" style="background-color: #003366;">
+                            <img src="/IMG_5676.jpg" alt="aston martin db2" style="height: auto; width: 100%;">
+                        </div>
                     </div>
-                    <div class="col-5 p-3" style="background-color: #003366; margin-left: 10px;">
-                        <img src="/IMG_4165.jpg" alt="aston martin db2" style="height: auto; width: 100%;">
+                    <div class="col-6 p-3" style="background-color: #003366;">
+                        <img src="/IMG_5673.jpg" alt="aston martin db2" style="height: auto; width: 100%;">
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <img src="/seperator.png" class="w-100">
         </div>
     </div>
     <div class="row mt-5">
@@ -120,3 +145,39 @@
         <div class="col-3"></div>
     </div>
 </template>
+
+<style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+    }
+
+    .video-container {
+        position: relative;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .scroll-to {
+        position: absolute;
+        bottom: 12%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: none;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        cursor: pointer;
+        z-index: 10;
+        font-size: 16px;
+        text-decoration: underline;
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    .scroll-to:hover {
+        opacity: 0.7;
+        color: #FF0000;
+    }
+</style>
