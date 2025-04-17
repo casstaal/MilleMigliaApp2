@@ -61,6 +61,33 @@
         });
     }
     }
+
+    // Favorites images
+    const favoriteImages = [
+        "/favorites/IMG_4024.jpg",
+        "/favorites/IMG_4025.jpg",
+        "/favorites/IMG_4034.jpg",
+        "/favorites/IMG_4065.jpg",
+        "/favorites/IMG_4089.jpg",
+        "/favorites/IMG_4094.jpg",
+        "/favorites/IMG_4095.jpg",
+        "/favorites/IMG_4096.jpg",
+        "/favorites/IMG_4164.jpg",
+        "/favorites/IMG_4165.jpg",
+        "/favorites/IMG_5681.jpg",
+        "/favorites/IMG_5688.jpg",
+        ];
+
+    // Utility to chunk the array into rows of 4
+    function chunkArray<T>(array: T[], size: number): T[][] {
+    const result: T[][] = [];
+    for (let i = 0; i < array.length; i += size) {
+        result.push(array.slice(i, i + size));
+    }
+    return result;
+    }
+
+    const chunkedFavorites = chunkArray(favoriteImages, 4);
 </script>
 
 <template>
@@ -148,7 +175,7 @@
             <img src="/seperator2.png" class="w-100">
         </div>
     </div>
-    <div>
+    <div class="pb-4">
         <h1 class="text-center mt-5 mb-5">Keep in touch</h1>
         <div class="row">
             <div class="col-3"></div>
@@ -194,6 +221,20 @@
                     </div>
                     <button type="submit" class="btn w-100" style="background-color: #F2A7A6; color: white;">JOIN ></button>
                 </form>
+            </div>
+            <div class="col-3"></div>
+        </div>
+    </div>
+    <div class="mt-5" style="background-color: #eae7e1;">
+        <div class="row">
+            <div class="col-3"></div>
+            <div class="col-6 mt-5 mb-5">
+                <h1>Favorites over the years</h1>
+                <div v-for="(row, rowIndex) in chunkedFavorites" :key="rowIndex" class="row mb-4">
+                    <div v-for="(image, index) in row" :key="index" class="col-3">
+                        <img :src="image" class="img-fluid rounded shadow-sm" style="object-fit: cover; width: 100%; height: auto;" />
+                    </div>
+                </div>
             </div>
             <div class="col-3"></div>
         </div>
