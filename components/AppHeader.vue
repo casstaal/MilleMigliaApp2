@@ -6,6 +6,16 @@
     const logout = () => {
         signOut();
     }
+
+    const newPost = ref(false);
+
+    onMounted(async () => {
+        const response = await $fetch("/api/posts/check-new", { credentials: "include" }).catch(() => null);
+
+        if (response?.newPostAvailable) {
+            newPost.value = true;
+        }
+    });
 </script>
 
 
@@ -29,8 +39,12 @@
                     <li class="nav-item">
                         <a class="nav-link text-white" href="#">Dashboard</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item position-relative">
                         <a class="nav-link text-white" href="/blog">Blog</a>
+                        <span v-if="newPost" 
+                            class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
+                            <span class="visually-hidden">New posts</span>
+                        </span>
                     </li>
                 </ul>
                 <div class="d-flex align-items-center justify-content-center">

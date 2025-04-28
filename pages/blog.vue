@@ -5,6 +5,12 @@
     import { toTypedSchema } from "@vee-validate/zod";
     import { object, string, z } from "zod";
     import { useRoute, useRouter } from "vue-router";
+    import { useCookie } from '#app';
+
+    onMounted(() => {
+        const lastVisit = useCookie('lastVisit', { path: '/' });
+        lastVisit.value = new Date().toISOString();
+    });
 
     const route = useRoute();
     const router = useRouter();
