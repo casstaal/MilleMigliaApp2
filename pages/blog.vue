@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { type Saved, type Like, type Post } from "@prisma/client";
+    import type { Saved, Like, Post } from "@prisma/client";
     import { Icon } from "@iconify/vue";
     import type { FetchError } from "ofetch";
     import { toTypedSchema } from "@vee-validate/zod";

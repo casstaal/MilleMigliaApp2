@@ -314,7 +314,7 @@
                     </div>
                     <span v-else><h1>{{ marker?.brand }} {{ marker?.model }}</h1></span>
                 </div>
-                <div class="col-lg-3 col-sm-12 mt-2">
+                <div class="col-lg-3 col-sm-12 mt-2 mb-2">
                     <div v-if="isEditing">
                         <button @click="updateMarker" class="btn col-6" style="background-color: #003366; color: white;">Save</button>
                         <button @click="toggleEditMode" class="btn col-6" style="background-color: #FF0000; color: white;">Cancel</button>
@@ -325,10 +325,136 @@
                     </span>
                 </div>
             </div>
-            <img class="carImg" :src="firstImage" alt="test"/>
+            <img class="carImg pe-3 pe-lg-0" :src="firstImage" alt="test"/>
+            <div class="row mt-3">
+                    <!-- First image -->
+                    <div v-if="!marker?.images[0] && isEditing" class="col-3 border d-flex justify-content-center align-items-center bg-light">
+                        <label for="fileInput1" class="d-flex justify-content-center align-items-center" style="cursor: pointer;">
+                            <Icon icon="codicon:add" :style="{ fontSize: '48px'}" :ssr="true" />
+                        </label>
+                        <input type="file" id="fileInput1" class="d-none" @change="handleFileChange($event, 0)" />
+                    </div>
+                    <div v-if="marker?.images[0]" class="col-3">
+                        <div v-if="!isEditing">
+                            <div v-if="!firstImageSelected">
+                                <img class="carImg" :src="marker?.images[0]" alt="test" @click="toggleImage(1)"/>
+                            </div>
+                            <div v-if="firstImageSelected" class="border border-4 border-danger">
+                                <img class="carImg" :src="marker?.images[0]" alt="test" @click="toggleImage(1)"/>
+                            </div>
+                        </div>
+                        <div v-if="isEditing">
+                            <div v-if="!firstImageSelected" class="position-relative">
+                                <img class="carImg" :src="marker?.images[0]" alt="test" @click="toggleImage(1)"/>
+                                <div class="position-absolute bottom-0 end-0 mb-2 me-2">
+                                    <Icon icon="codicon:trash" :style="{ fontSize: '26px', cursor: 'pointer', color: '#FF0000' }" :ssr="true" @click="confirmImageDelete(0)" />
+                                </div>
+                            </div>
+                            <div v-if="firstImageSelected" class="border border-4 border-danger position-relative">
+                                <img class="carImg" :src="marker?.images[0]" alt="test" @click="toggleImage(1)"/>
+                                <div class="position-absolute bottom-0 end-0 mb-2 me-2">
+                                    <Icon icon="codicon:trash" :style="{ fontSize: '26px', cursor: 'pointer', color: '#FF0000' }" :ssr="true" @click="confirmImageDelete(0)" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Second image -->
+                    <div v-if="!marker?.images[1] && isEditing" class="col-3 border d-flex justify-content-center align-items-center bg-light">
+                        <label for="fileInput1" class="d-flex justify-content-center align-items-center" style="cursor: pointer;">
+                            <Icon icon="codicon:add" :style="{ fontSize: '48px'}" :ssr="true" />
+                        </label>
+                        <input type="file" id="fileInput1" class="d-none" @change="handleFileChange($event, 1)" />
+                    </div>
+                    <div v-if="marker?.images[1]" class="col-3">
+                        <div v-if="!isEditing">
+                            <div v-if="!secondImageSelected">
+                                <img class="carImg" :src="marker?.images[1]" alt="test" @click="toggleImage(2)"/>
+                            </div>
+                            <div v-if="secondImageSelected" class="border border-4 border-danger">
+                                <img class="carImg" :src="marker?.images[1]" alt="test" @click="toggleImage(2)"/>
+                            </div>
+                        </div>
+                        <div v-if="isEditing">
+                            <div v-if="!secondImageSelected" class="position-relative">
+                                <img class="carImg" :src="marker?.images[1]" alt="test" @click="toggleImage(2)"/>
+                                <div class="position-absolute bottom-0 end-0 mb-2 me-2">
+                                    <Icon icon="codicon:trash" :style="{ fontSize: '26px', cursor: 'pointer', color: '#FF0000' }" :ssr="true" @click="confirmImageDelete(1)" />
+                                </div>
+                            </div>
+                            <div v-if="secondImageSelected" class="border border-4 border-danger position-relative">
+                                <img class="carImg" :src="marker?.images[1]" alt="test" @click="toggleImage(2)"/>
+                                <div class="position-absolute bottom-0 end-0 mb-2 me-2">
+                                    <Icon icon="codicon:trash" :style="{ fontSize: '26px', cursor: 'pointer', color: '#FF0000' }" :ssr="true" @click="confirmImageDelete(1)" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Third Image -->
+                    <div v-if="!marker?.images[2] && isEditing" class="col-3 border d-flex justify-content-center align-items-center bg-light">
+                        <label for="fileInput1" class="d-flex justify-content-center align-items-center" style="cursor: pointer;">
+                            <Icon icon="codicon:add" :style="{ fontSize: '48px'}" :ssr="true" />
+                        </label>
+                        <input type="file" id="fileInput1" class="d-none" @change="handleFileChange($event, 2)" />
+                    </div>
+                    <div v-if="marker?.images[2]" class="col-3">
+                        <div v-if="!isEditing">
+                            <div v-if="!thirdImageSelected">
+                                <img class="carImg" :src="marker?.images[2]" alt="test" @click="toggleImage(3)"/>
+                            </div>
+                            <div v-if="thirdImageSelected" class="border border-4 border-danger">
+                                <img class="carImg" :src="marker?.images[2]" alt="test" @click="toggleImage(3)"/>
+                            </div>
+                        </div>
+                        <div v-if="isEditing">
+                            <div v-if="!thirdImageSelected" class="position-relative">
+                                <img class="carImg" :src="marker?.images[2]" alt="test" @click="toggleImage(3)"/>
+                                <div class="position-absolute bottom-0 end-0 mb-2 me-2">
+                                    <Icon icon="codicon:trash" :style="{ fontSize: '26px', cursor: 'pointer', color: '#FF0000' }" :ssr="true" @click="confirmImageDelete(2)" />
+                                </div>
+                            </div>
+                            <div v-if="thirdImageSelected" class="border border-4 border-danger position-relative">
+                                <img class="carImg" :src="marker?.images[2]" alt="test" @click="toggleImage(3)"/>
+                                <div class="position-absolute bottom-0 end-0 mb-2 me-2">
+                                    <Icon icon="codicon:trash" :style="{ fontSize: '26px', cursor: 'pointer', color: '#FF0000' }" :ssr="true" @click="confirmImageDelete(2)" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Fourth Image -->
+                    <div v-if="!marker?.images[3] && isEditing" class="col-3 border d-flex justify-content-center align-items-center bg-light">
+                        <label for="fileInput1" class="d-flex justify-content-center align-items-center" style="cursor: pointer;">
+                            <Icon icon="codicon:add" :style="{ fontSize: '48px'}" :ssr="true" />
+                        </label>
+                        <input type="file" id="fileInput1" class="d-none" @change="handleFileChange($event, 3)" />
+                    </div>
+                    <div v-if="marker?.images[3]" class="col-3">
+                        <div v-if="!isEditing">
+                            <div v-if="!fourthImageSelected">
+                                <img class="carImg" :src="marker?.images[3]" alt="test" @click="toggleImage(4)"/>
+                            </div>
+                            <div v-if="fourthImageSelected" class="border border-4 border-danger">
+                                <img class="carImg" :src="marker?.images[3]" alt="test" @click="toggleImage(4)"/>
+                            </div>
+                        </div>
+                        <div v-if="isEditing">
+                            <div v-if="!fourthImageSelected" class="position-relative">
+                                <img class="carImg" :src="marker?.images[3]" alt="test" @click="toggleImage(4)"/>
+                                <div class="position-absolute bottom-0 end-0 mb-2 me-2">
+                                    <Icon icon="codicon:trash" :style="{ fontSize: '26px', cursor: 'pointer', color: '#FF0000' }" :ssr="true" @click="confirmImageDelete(3)" />
+                                </div>
+                            </div>
+                            <div v-if="fourthImageSelected" class="border border-4 border-danger position-relative">
+                                <img class="carImg" :src="marker?.images[3]" alt="test" @click="toggleImage(4)"/>
+                                <div class="position-absolute bottom-0 end-0 mb-2 me-2">
+                                    <Icon icon="codicon:trash" :style="{ fontSize: '26px', cursor: 'pointer', color: '#FF0000' }" :ssr="true" @click="confirmImageDelete(3)" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
         </div>
-        <div class="col-lg-5 col-sm-12 mt-5">
-            <div>
+        <div class="col-lg-5 col-sm-12 mt-lg-5">
+            <div class="ps-3 ps-lg-0">
                 <h4>Informatie:</h4>
                 <div>
                     <div class="row">
@@ -356,7 +482,7 @@
                     </div>
                 </div>
             </div>
-            <div>
+            <div class="ps-3 ps-lg-0">
                 <h4>Beschrijving {{ user?.data?.value?.name }}:</h4>
                 <div v-if="isEditing">
                     <textarea 
@@ -372,7 +498,7 @@
                     <p>{{ marker?.description }}</p>
                 </span>
             </div>
-            <div>
+            <div class="ps-3 ps-lg-0">
                 <h4>Locatie:</h4>
                 <div v-if="isEditing">
                     <div class="row">
@@ -390,139 +516,9 @@
                 </div>
                 <div ref="mapContainer" class="map-container"></div>
             </div>
-            <div class="mt-3">
+            <div class="mt-3 ps-3 ps-lg-0">
                 <h4>Beschrijving van Mille Miglia:</h4>
                 <p>Het idee is om het nummer van de auto mee te geven en dan door de pdf heen te lezen, om zo de informatie op te vragen</p>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-6 ms-3 mb-3">
-            <div class="row">
-                <!-- First image -->
-                <div v-if="!marker?.images[0] && isEditing" class="col-lg-3 border d-flex justify-content-center align-items-center bg-light">
-                    <label for="fileInput1" class="d-flex justify-content-center align-items-center" style="cursor: pointer;">
-                        <Icon icon="codicon:add" :style="{ fontSize: '48px'}" :ssr="true" />
-                    </label>
-                    <input type="file" id="fileInput1" class="d-none" @change="handleFileChange($event, 0)" />
-                </div>
-                <div v-if="marker?.images[0]" class="col-lg-3">
-                    <div v-if="!isEditing">
-                        <div v-if="!firstImageSelected">
-                            <img class="carImg" :src="marker?.images[0]" alt="test" @click="toggleImage(1)"/>
-                        </div>
-                        <div v-if="firstImageSelected" class="border border-4 border-danger">
-                            <img class="carImg" :src="marker?.images[0]" alt="test" @click="toggleImage(1)"/>
-                        </div>
-                    </div>
-                    <div v-if="isEditing">
-                        <div v-if="!firstImageSelected" class="position-relative">
-                            <img class="carImg" :src="marker?.images[0]" alt="test" @click="toggleImage(1)"/>
-                            <div class="position-absolute bottom-0 end-0 mb-2 me-2">
-                                <Icon icon="codicon:trash" :style="{ fontSize: '26px', cursor: 'pointer', color: '#FF0000' }" :ssr="true" @click="confirmImageDelete(0)" />
-                            </div>
-                        </div>
-                        <div v-if="firstImageSelected" class="border border-4 border-danger position-relative">
-                            <img class="carImg" :src="marker?.images[0]" alt="test" @click="toggleImage(1)"/>
-                            <div class="position-absolute bottom-0 end-0 mb-2 me-2">
-                                <Icon icon="codicon:trash" :style="{ fontSize: '26px', cursor: 'pointer', color: '#FF0000' }" :ssr="true" @click="confirmImageDelete(0)" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Second image -->
-                <div v-if="!marker?.images[1] && isEditing" class="col-lg-3 border d-flex justify-content-center align-items-center bg-light">
-                    <label for="fileInput1" class="d-flex justify-content-center align-items-center" style="cursor: pointer;">
-                        <Icon icon="codicon:add" :style="{ fontSize: '48px'}" :ssr="true" />
-                    </label>
-                    <input type="file" id="fileInput1" class="d-none" @change="handleFileChange($event, 1)" />
-                </div>
-                <div v-if="marker?.images[1]" class="col-lg-3">
-                    <div v-if="!isEditing">
-                        <div v-if="!secondImageSelected">
-                            <img class="carImg" :src="marker?.images[1]" alt="test" @click="toggleImage(2)"/>
-                        </div>
-                        <div v-if="secondImageSelected" class="border border-4 border-danger">
-                            <img class="carImg" :src="marker?.images[1]" alt="test" @click="toggleImage(2)"/>
-                        </div>
-                    </div>
-                    <div v-if="isEditing">
-                        <div v-if="!secondImageSelected" class="position-relative">
-                            <img class="carImg" :src="marker?.images[1]" alt="test" @click="toggleImage(2)"/>
-                            <div class="position-absolute bottom-0 end-0 mb-2 me-2">
-                                <Icon icon="codicon:trash" :style="{ fontSize: '26px', cursor: 'pointer', color: '#FF0000' }" :ssr="true" @click="confirmImageDelete(1)" />
-                            </div>
-                        </div>
-                        <div v-if="secondImageSelected" class="border border-4 border-danger position-relative">
-                            <img class="carImg" :src="marker?.images[1]" alt="test" @click="toggleImage(2)"/>
-                            <div class="position-absolute bottom-0 end-0 mb-2 me-2">
-                                <Icon icon="codicon:trash" :style="{ fontSize: '26px', cursor: 'pointer', color: '#FF0000' }" :ssr="true" @click="confirmImageDelete(1)" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Third Image -->
-                <div v-if="!marker?.images[2] && isEditing" class="col-lg-3 border d-flex justify-content-center align-items-center bg-light">
-                    <label for="fileInput1" class="d-flex justify-content-center align-items-center" style="cursor: pointer;">
-                        <Icon icon="codicon:add" :style="{ fontSize: '48px'}" :ssr="true" />
-                    </label>
-                    <input type="file" id="fileInput1" class="d-none" @change="handleFileChange($event, 2)" />
-                </div>
-                <div v-if="marker?.images[2]" class="col-lg-3">
-                    <div v-if="!isEditing">
-                        <div v-if="!thirdImageSelected">
-                            <img class="carImg" :src="marker?.images[2]" alt="test" @click="toggleImage(3)"/>
-                        </div>
-                        <div v-if="thirdImageSelected" class="border border-4 border-danger">
-                            <img class="carImg" :src="marker?.images[2]" alt="test" @click="toggleImage(3)"/>
-                        </div>
-                    </div>
-                    <div v-if="isEditing">
-                        <div v-if="!thirdImageSelected" class="position-relative">
-                            <img class="carImg" :src="marker?.images[2]" alt="test" @click="toggleImage(3)"/>
-                            <div class="position-absolute bottom-0 end-0 mb-2 me-2">
-                                <Icon icon="codicon:trash" :style="{ fontSize: '26px', cursor: 'pointer', color: '#FF0000' }" :ssr="true" @click="confirmImageDelete(2)" />
-                            </div>
-                        </div>
-                        <div v-if="thirdImageSelected" class="border border-4 border-danger position-relative">
-                            <img class="carImg" :src="marker?.images[2]" alt="test" @click="toggleImage(3)"/>
-                            <div class="position-absolute bottom-0 end-0 mb-2 me-2">
-                                <Icon icon="codicon:trash" :style="{ fontSize: '26px', cursor: 'pointer', color: '#FF0000' }" :ssr="true" @click="confirmImageDelete(2)" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Fourth Image -->
-                <div v-if="!marker?.images[3] && isEditing" class="col-lg-3 border d-flex justify-content-center align-items-center bg-light">
-                    <label for="fileInput1" class="d-flex justify-content-center align-items-center" style="cursor: pointer;">
-                        <Icon icon="codicon:add" :style="{ fontSize: '48px'}" :ssr="true" />
-                    </label>
-                    <input type="file" id="fileInput1" class="d-none" @change="handleFileChange($event, 3)" />
-                </div>
-                <div v-if="marker?.images[3]" class="col-lg-3">
-                    <div v-if="!isEditing">
-                        <div v-if="!fourthImageSelected">
-                            <img class="carImg" :src="marker?.images[3]" alt="test" @click="toggleImage(4)"/>
-                        </div>
-                        <div v-if="fourthImageSelected" class="border border-4 border-danger">
-                            <img class="carImg" :src="marker?.images[3]" alt="test" @click="toggleImage(4)"/>
-                        </div>
-                    </div>
-                    <div v-if="isEditing">
-                        <div v-if="!fourthImageSelected" class="position-relative">
-                            <img class="carImg" :src="marker?.images[3]" alt="test" @click="toggleImage(4)"/>
-                            <div class="position-absolute bottom-0 end-0 mb-2 me-2">
-                                <Icon icon="codicon:trash" :style="{ fontSize: '26px', cursor: 'pointer', color: '#FF0000' }" :ssr="true" @click="confirmImageDelete(3)" />
-                            </div>
-                        </div>
-                        <div v-if="fourthImageSelected" class="border border-4 border-danger position-relative">
-                            <img class="carImg" :src="marker?.images[3]" alt="test" @click="toggleImage(4)"/>
-                            <div class="position-absolute bottom-0 end-0 mb-2 me-2">
-                                <Icon icon="codicon:trash" :style="{ fontSize: '26px', cursor: 'pointer', color: '#FF0000' }" :ssr="true" @click="confirmImageDelete(3)" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>

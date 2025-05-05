@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { type Marker, type Post } from "@prisma/client";
+    import type { Marker, Post } from "@prisma/client";
     import { ref, onMounted, onUnmounted } from "vue";
     import { Icon } from "@iconify/vue";
 
