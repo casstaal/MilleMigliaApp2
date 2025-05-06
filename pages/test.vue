@@ -90,6 +90,9 @@
     const chunkedFavorites = chunkArray(favoriteImages, 4);
 </script>
 
+    <!-- Bootstrap 5.3 uses a mobile-first approach, and col-sm-* is actually only applied on ≥576px widths.
+    In other words: below 576px, no grid columns are applied at all unless you specify col-12 or similar  -->
+
 <template>
     <div class="video-container">
         <video width="100%" height="auto" autoplay muted loop playsinline>
@@ -104,8 +107,8 @@
     </div>
 
     <div class="row home-sec-intro pt-4 pb-4" style="background-color: #f2f0ec;">
-        <div class="col-3"></div>
-        <div class="col-6 p-5 rounded-3">
+        <div class="col-lg-3"></div>
+        <div class="col-lg-6 col-12 p-5 p-sm-0 rounded-3">
             <h1 class="text-center">1000 Miglia, the most beautiful race in the world</h1>
             <p class="text-center">
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
@@ -114,13 +117,12 @@
                 <NuxtLink to="/map" class="start-button btn mt-4" style="background-color: #003366; color:white;">Ga naar kaart</NuxtLink>
             </div>
         </div>
-        <div class="col-3"></div>
+        <div class="col-lg-3"></div>
     </div>
     <div class="row pt-5 pb-5" style="background-color: #eae7e1;">
-        <div class="row">
-            <div class="col-3"></div>
-            <div class="col-6 d-flex align-items-center p-3" style="background-color: #003366;">
-                <div class="col-6">
+            <div class="col-lg-3 col-1"></div>
+            <div class="col-lg-6 col-10 d-flex align-items-center p-3" style="background-color: #003366;">
+                <div class="col-6 me-1">
                     <img src="/IMG_5676.jpg" alt="aston martin db2" style="height: auto; width: 100%;">
                 </div>
                 <div class="col-6">
@@ -134,11 +136,10 @@
                     </div>
                 </div>
             </div>
-        </div>
     </div>
     <div class="row mt-5">
-        <div class="col-3"></div>
-        <div class="col-6 mb-5">
+        <div class="col-lg-3 col-1"></div>
+        <div class="col-lg-6 col-10 mb-5">
             <h1>Posts</h1>
             <!-- <NuxtLink to="/blog" class="start-button btn mt-4" style="background-color: #003366; color:white;">Zie alle posts</NuxtLink> -->
             <hr />
@@ -148,7 +149,7 @@
                     <Icon icon="codicon:chevron-left" width="32" />
                 </button>
                 <div ref="postsContainer" class="posts-carousel d-flex flex-nowrap overflow-auto">
-                    <div v-for="post in posts?.slice(0, 10)" :key="post.id" class="col-3 border card p-3 shadow-sm mb-3 bg-white me-4">
+                    <div v-for="post in posts?.slice(0, 10)" :key="post.id" class="col-lg-3 col-10 border card p-3 shadow-sm mb-3 bg-white me-4">
                         <h3>{{ post.title }}</h3>
                         <div class="d-flex justify-content-between mb-2">
                             <p class="mb-0">Cas Staal</p>
@@ -168,7 +169,7 @@
                 </button>
             </div>
         </div>
-        <div class="col-3"></div>
+        <div class="col-lg-3 col-1"></div>
     </div>
     <div class="row">
         <div class="col-12">
@@ -225,18 +226,20 @@
             <div class="col-3"></div>
         </div>
     </div>
+
+    <!-- Denk dat ik die favorieten weglaat -->
     <div class="mt-5" style="background-color: #eae7e1;">
         <div class="row">
-            <div class="col-3"></div>
-            <div class="col-6 mt-5 mb-5">
+            <div class="col-lg-3 col-1"></div>
+            <div class="col-lg-6 col-10 mt-5 mb-5">
                 <h1>Favorites over the years</h1>
                 <div v-for="(row, rowIndex) in chunkedFavorites" :key="rowIndex" class="row mb-4">
-                    <div v-for="(image, index) in row" :key="index" class="col-3">
+                    <div v-for="(image, index) in row" :key="index" class="col-lg-3 col-12 mb-lg-0 mb-3">
                         <img :src="image" class="img-fluid rounded shadow-sm" style="object-fit: cover; width: 100%; height: auto;" />
                     </div>
                 </div>
             </div>
-            <div class="col-3"></div>
+            <div class="col-lg-3 col-1"></div>
         </div>
     </div>
 </template>
@@ -298,6 +301,6 @@
     }
 
     .posts-carousel::-webkit-scrollbar {
-        display: none; /* Optional: hide scrollbar */
+        display: none; 
     }
 </style>
