@@ -131,7 +131,7 @@
                         <h1>1000 Miglia</h1>
                         <h5>{{ countdown }}</h5>
                         <a href="https://1000miglia.it/en/events/1000-miglia/1000-miglia-2025/" target="_blank">
-                            <button class="btn" type="button" style="background-color: #FF0000; color: white;"><b>SEE THE EVENT ></b></button>
+                            <button class="btn" type="button" style="background-color: #FF0000; color: white;"><b>SEE THE EVENT</b></button>
                         </a>
                     </div>
                 </div>
@@ -228,7 +228,8 @@
     </div>
 
     <!-- Denk dat ik die favorieten weglaat -->
-    <div class="mt-5" style="background-color: #eae7e1;">
+
+    <!-- <div class="mt-5" style="background-color: #eae7e1;">
         <div class="row">
             <div class="col-lg-3 col-1"></div>
             <div class="col-lg-6 col-10 mt-5 mb-5">
@@ -241,7 +242,7 @@
             </div>
             <div class="col-lg-3 col-1"></div>
         </div>
-    </div>
+    </div> -->
 </template>
 
 <style>
