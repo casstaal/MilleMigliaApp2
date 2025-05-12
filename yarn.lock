@@ -2566,6 +2566,11 @@
   dependencies:
     vue "^3.5.13"
 
+"@xmldom/xmldom@^0.8.10":
+  version "0.8.10"
+  resolved "https://registry.yarnpkg.com/@xmldom/xmldom/-/xmldom-0.8.10.tgz#a1337ca426aa61cef9fe15b5b28e340a72f6fa99"
+  integrity sha512-2WALfTl4xo2SkGCYRt6rDTFfk9R1czmBvUQy12gK2KuRKIpWEhcbbzy8EZXtz/jkRqHX8bFEc6FC1HjX4TUWYw==
+
 abbrev@1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/abbrev/-/abbrev-1.1.1.tgz#f8f2c887ad10bf67f634f005b6987fed3179aac8"
@@ -5162,6 +5167,20 @@ pdf-parse@^1.1.1:
   dependencies:
     debug "^3.1.0"
     node-ensure "^0.0.0"
+
+pdf2json@3.1.4:
+  version "3.1.4"
+  resolved "https://registry.yarnpkg.com/pdf2json/-/pdf2json-3.1.4.tgz#d1bf8cb663bef9568bba3ad6d58b4e2b662c93b8"
+  integrity sha512-rS+VapXpXZr+5lUpHmRh3ugXdFXp24p1RyG24yP1DMpqP4t0mrYNGpLtpSbWD42PnQ59GIXofxF+yWb7M+3THg==
+  dependencies:
+    "@xmldom/xmldom" "^0.8.10"
+
+pdfreader@^3.0.7:
+  version "3.0.7"
+  resolved "https://registry.yarnpkg.com/pdfreader/-/pdfreader-3.0.7.tgz#6cda2871c1b414d5ddbb321372c610543237d4af"
+  integrity sha512-68Htw7su6HDJGGKv9tkjilRyf8zaHulEKRCgCwx4FE8krcMB8iBtM46Smjjez0jFm45dUKYXJzThyLwCqfQlCQ==
+  dependencies:
+    pdf2json "3.1.4"
 
 perfect-debounce@^1.0.0:
   version "1.0.0"
