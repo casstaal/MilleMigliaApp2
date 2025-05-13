@@ -215,6 +215,54 @@
         }
     }
 
+    async function shareMarker() {
+        const shareData = {
+            title: 'Check out this marker!',
+            text: 'Here is a cool marker I found:',
+            url: window.location.href
+        }
+
+        console.log('URL: ', shareData.url);
+
+        try {
+            await navigator.share(shareData);
+            console.log('Shared successfully');
+        } catch (err) {
+            console.error('Share failed:', err);
+        }
+    }
+
+// async function shareMarker() {
+//     const imageUrl = marker?.value?.images?.[0];
+    
+//     if (!imageUrl) {
+//         console.warn('No image URL available to share.');
+//         return;
+//     }
+
+//     try {
+//         const response = await fetch(imageUrl);
+//         const blob = await response.blob();
+//         const file = new File([blob], 'marker-image.jpg', { type: blob.type });
+
+//         const shareData: ShareData = {
+//             title: 'Check out this marker!',
+//             text: 'Here is a cool marker I found:',
+//             url: `${window.location.origin}/marker/${marker?.value?.id}`,
+//             files: [file]
+//         };
+
+//         if (navigator.canShare?.({ files: [file] })) {
+//             await navigator.share(shareData);
+//             console.log('Shared successfully');
+//         } else {
+//             console.warn('Sharing files not supported on this device.');
+//         }
+//     } catch (err) {
+//         console.error('Share failed:', err);
+//     }
+// }
+
     const isPopupVisible = ref(false);  
 
     const togglePopup = () => {
@@ -312,7 +360,10 @@
                         <input v-model="editableMarker.brand" style="font-size: 1.5rem;" placeholder="Merk"/>
                         <input v-model="editableMarker.model" style="font-size: 1.5rem;" placeholder="Model"/>
                     </div>
-                    <span v-else><h1>{{ marker?.brand }} {{ marker?.model }}</h1></span>
+                    <span v-else class="d-flex align-items-center">
+                        <h1>{{ marker?.brand }} {{ marker?.model }}</h1>
+                        <Icon icon="codicon:share" :style="{ fontSize: '40px'}" :ssr="true" @click="shareMarker()" />
+                    </span>
                 </div>
                 <div class="col-lg-3 col-sm-12 mt-2 mb-2">
                     <div v-if="isEditing">
