@@ -9,35 +9,30 @@ type TextItem = {
 };
 
 
-function extractCarInfo(filePath: string, searchNumber: number): Promise<{ number: number; make: string; model: string } | null> {
+function extractCarInfo(filePath: string, searchNumber: number): Promise<object[] | null> { // { number: number; make: string; model: string }
   return new Promise((resolve, reject) => {
     const rows: Record<number, any[]> = {};
+    const items: object[] = [];
+    let skipCount = 0;
 
     new PdfReader().parseFileItems(filePath, (err, item) => {
+      skipCount++;
+
+      if(skipCount < 27) {
+        return;
+      }
+
       const textItem = item as TextItem;
-      //console.log('test 1')
+      items.push(item as object)
+
       if (err) return reject(err);
-        //console.log('test 2')
+
       if (!textItem) {
-        for (const row of Object.values(rows)) {
-          const text = row
-            .sort((a, b) => a.x - b.x)
-            .map(cell => cell.text)
-            .join(' ');
-            //console.log(text)
-          if (text.startsWith(searchNumber.toString())) {
-            //console.log('test 13')
-            const parts = text.split(' ');
-            const make = parts[6];
-            const model = parts.slice(7, parts.length - 3).join(' ');
-            return resolve({ number: searchNumber, make, model });
-          }
-        }
-        return resolve(null);
+        return resolve(items)
       } else if (textItem.text) {
-        //console.log(textItem.text);
         (rows[textItem.y] = rows[textItem.y] || []).push(textItem);
       }
+
     });
   });
 }
