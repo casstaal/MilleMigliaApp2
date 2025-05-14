@@ -320,7 +320,7 @@
 <template>
     <div class="row">
         <div class="col-lg-3"></div>
-        <div class="py-5 col-lg-6">
+        <div class="py-5 ps-4 col-lg-6">
             <h1>Blogs</h1>
             <input class="form-control mb-3 mt-3 bg-white" type="text" v-model="search" placeholder="Search..." />
             <hr />
@@ -355,7 +355,7 @@
                         </button>
                     </div>
                 </div>
-                <div v-if="!isAdding" class="me-5">
+                <div v-if="!isAdding" class="me-lg-4">
                     <button class="border-0 bg-transparent p-0">
                         <Icon icon="codicon:add" :style="{ fontSize: '42px', cursor: 'pointer' }" :ssr="true" @click="toggleAddMode" />
                     </button>
@@ -395,7 +395,7 @@
                 </div>
                 <div v-for="post in filteredPosts" :key="post.id" class="card p-3 shadow-sm mb-3 bg-white" :class="{ 'selected': selectedPostId === post.id }" :ref="el => postRefs[post.id] = el as HTMLElement" @click="!isEditing && toggleSelectMode(post.id)">
                     <div class="row">
-                        <div class="card-body col-8">
+                        <div class="card-body col-lg-8">
                             <div class="row">
                                 <div v-if="!(isEditing && post.id === selectedPostId)" class="col-10">
                                     <h3>
@@ -407,7 +407,7 @@
                                         <input class="w-100" style="font-size: 1.5rem;" v-model="editablePost.title" placeholder="Titel">
                                     </h3>
                                 </div>
-                                <div class="col-2">
+                                <div class="col-lg-2">
                                     <div class="row align-items-center gx-0">
                                         <div class="col-auto">
                                             {{ post?.date ? new Date(post.date).toISOString().split('T')[0] : '' }}
@@ -419,7 +419,7 @@
                                                 :icon="isLiked(post.id) ? 'codicon:heart-filled' : 'codicon:heart'" 
                                                 :style="{ fontSize: '26px', cursor: 'pointer', color: isLiked(post.id) ? '#FF0000' : 'black' }" 
                                                 :ssr="true" 
-                                                @click="isLiked(post.id) ? deleteLike(getLikeId(post.id)) : likePost(post.id)" 
+                                                @click.stop="isLiked(post.id) ? deleteLike(getLikeId(post.id)) : likePost(post.id)" 
                                             />
                                         </div>
                                         <div class="col-auto d-flex align-items-center">
@@ -427,7 +427,7 @@
                                                 :icon="isSaved(post.id) ? 'material-symbols:bookmark' : 'material-symbols:bookmark-outline'" 
                                                 :style="{ fontSize: '26px', cursor: 'pointer', color: isSaved(post.id) ? '#003366' : 'black' }" 
                                                 :ssr="true" 
-                                                @click="isSaved(post.id) ? deleteSave(getSaveId(post.id)) : saveSave(post.id)" 
+                                                @click.stop="isSaved(post.id) ? deleteSave(getSaveId(post.id)) : saveSave(post.id)" 
                                             />
                                         </div>
                                     </div>
