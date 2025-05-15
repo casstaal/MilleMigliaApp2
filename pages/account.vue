@@ -2,10 +2,15 @@
     import type { User } from "@prisma/client";
     import type { FetchError } from "ofetch";
     import { object, string, z } from "zod";
+    import { useRoute, useRouter } from "vue-router";
+    import { Icon } from "@iconify/vue";
 
     const { getSession, data } = useAuth();
 
     const session = await getSession();
+
+    const route = useRoute();
+    const router = useRouter();
 
     const users = ref<User[] | null>(null);
     const { data: userData } = await useFetch<User[]>(`/api/users`);
@@ -97,6 +102,39 @@
         window.location.reload();
     }
 
+    const isSelected = ref(false);
+    const selectedUserId = ref<string | null>(null)
+
+    function toggleSelectMode(postId: string) {
+        if (selectedUserId.value === postId) {
+            selectedUserId.value = null;
+            isSelected.value = false;
+        } else {
+            selectedUserId.value = postId;
+            isSelected.value = true;
+        }
+    }
+
+    async function deleteUser() {
+        const userId = selectedUserId.value;
+        const response = await $fetch<User>(`/api/users/${selectedUserId}`, { method: "delete", body: { userId }}).catch((e: FetchError) => {
+            errorMessage.value = e.data.message;
+            error.value = true;
+        });
+
+        if (error.value) {
+            return;
+        }
+
+        if (!response) {
+            errorMessage.value = "An error occurred";
+            error.value = true;
+            return;
+        }
+
+        window.location.reload();
+    }
+
     const welcomeMessage = ref('');
 
     function getWelcomeMessage() {
@@ -113,6 +151,7 @@
     }
 
     onMounted(() => {
+        console.log("role: " + session?.user?.role);
         welcomeMessage.value = getWelcomeMessage();
     });
 
@@ -155,9 +194,22 @@
         </div>
     </div>
 
+    <!-- <div v-if="session?.user?.role === 'admin'" class="row mt-5"> -->
     <div class="row mt-5">
         <div class="col-lg-6 pe-lg-3 ps-lg-5 ps-4 pe-4 mb-4">
-            <h2>Users</h2>
+            <div class="d-flex align-items-center gap-2">
+                <h2 class="mb-0">Users</h2>
+                <div v-if="isSelected">
+                    <Icon
+                    icon="codicon:trash"
+                    :style="{ fontSize: '26px', cursor: 'pointer', color: '#FF0000' }"
+                    :ssr="true"
+                    @click="deleteUser()"
+                    />
+                </div>
+            </div>
+
+
             <!-- laat zien of een user nu actief is of wanneer de laatste activiteit is. Hoeveel markers een user heeft toegevoegd en wanneer de laatste toevoeging is. -->
             <!-- Kleine dropdown om extra info van user te laten zien. Als hij ingeklapt is alleen de naam en groen puntje of actief is en anders hoelang geleden hij actief was. -->
             <!-- delete voor user (select user en dan verschijnt er een delete knop) -->
@@ -165,7 +217,7 @@
                 <div v-if="users?.length === 0" class="text-center text-muted p-3">
                     Geen users gevonden
                 </div>
-                <div v-for="user in users" :key="user.id" class="card p-3 shadow-sm mb-3 bg-white">
+                <div v-for="user in users" :key="user.id" class="card p-3 shadow-sm mb-3 bg-white" :class="{ 'selected': selectedUserId === user.id }" @click="toggleSelectMode(user.id)">
                     <div class="card-body">
                             <div class="row">
                                 <div class="col-4 d-flex flex-column justify-content-center">
@@ -224,5 +276,9 @@
 
     .addUser-form {
         overflow: hidden;
+    }
+
+    .selected {
+        border: 2px solid #003366 !important;
     }
 </style>
