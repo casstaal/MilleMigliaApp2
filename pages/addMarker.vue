@@ -8,6 +8,10 @@
     // import WalkthroughModal from "./WalkthroughModal.vue";
     import WalkthroughModal from "~/components/WalkthroughModal.vue";
 
+    definePageMeta({
+        middleware: 'my-middleware'
+    })
+
     const router = useRouter();
     const route = useRoute();
 

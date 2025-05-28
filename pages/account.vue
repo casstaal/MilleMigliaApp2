@@ -6,6 +6,10 @@
     import { Icon } from "@iconify/vue";
     import { Chart, registerables  } from 'chart.js';
 
+    definePageMeta({
+        middleware: 'my-middleware'
+    })
+
     Chart.register(...registerables);
 
     const { getSession, data } = useAuth();

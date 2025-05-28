@@ -5,6 +5,10 @@
     import { string } from "zod";
     import { Icon } from "@iconify/vue";
 
+    definePageMeta({
+        middleware: 'my-middleware'
+    })
+
     const { getSession, data } = useAuth();
 
     const session = await getSession();

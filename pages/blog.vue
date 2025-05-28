@@ -7,6 +7,10 @@
     import { useRoute, useRouter } from "vue-router";
     import { useCookie } from '#app';
 
+    definePageMeta({
+        middleware: 'my-middleware'
+    })
+
     onMounted(() => {
         const lastVisit = useCookie('lastVisit', { path: '/' });
         lastVisit.value = new Date().toISOString();

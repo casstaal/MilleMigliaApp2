@@ -1,4 +1,8 @@
 <script setup lang="ts">
+  definePageMeta({
+    middleware: 'my-middleware'
+  })
+
   const { getSession, data } = useAuth();
 
   const session = await getSession();

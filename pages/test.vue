@@ -3,6 +3,10 @@
     import { ref, onMounted, onUnmounted } from "vue";
     import { Icon } from "@iconify/vue";
 
+    definePageMeta({
+        middleware: 'my-middleware'
+    })
+
     const { data: markers } = await useFetch<Marker[]>("/api/markers");
     const { data: posts } = await useFetch<Post[]>("/api/posts", {
         credentials: "include",

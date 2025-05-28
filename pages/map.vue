@@ -2,6 +2,10 @@
 import type { Marker, User } from "@prisma/client";
 import { onMounted, ref } from "vue";
 
+definePageMeta({
+  middleware: 'my-middleware'
+})
+
 const mapContainer = ref<HTMLElement | null>(null);
 const loading = ref(true);
 
