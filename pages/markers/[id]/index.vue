@@ -5,8 +5,12 @@
     import { string } from "zod";
     import { Icon } from "@iconify/vue";
 
+    const { getSession, data } = useAuth();
+
+    const session = await getSession();
 
     const isEditing = ref(false); 
+    const canEditAndDelete = ref(false);
     const editableMarker = ref<Marker>({
         id: '', brand: '', model: '', description: '', images: [], date: new Date(), latitude: 0, longitude: 0, userId: ''
     });
@@ -25,6 +29,10 @@
             ...marker.value,
             date: marker.value.date ? new Date(marker.value.date) : new Date(),
         };
+    }
+
+    if (marker?.value?.userId === session?.user?.userId) {
+        canEditAndDelete.value = true;
     }
 
     function toggleEditMode() {
@@ -371,8 +379,10 @@
                         <button @click="toggleEditMode" class="btn col-6" style="background-color: #FF0000; color: white;">Cancel</button>
                     </div>
                     <span v-else>
-                        <button @click="toggleEditMode" class="btn col-6" style="background-color: #003366; color: white;">Edit</button>
-                        <button @click="confirmDelete" class="btn col-6" style="background-color: #FF0000; color: white;">Delete</button>
+                        <div v-if="canEditAndDelete">
+                            <button @click="toggleEditMode" class="btn col-6" style="background-color: #003366; color: white;">Edit</button>
+                            <button @click="confirmDelete" class="btn col-6" style="background-color: #FF0000; color: white;">Delete</button>
+                        </div>
                     </span>
                 </div>
             </div>
