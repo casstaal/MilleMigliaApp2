@@ -42,7 +42,7 @@ const onSubmit = handleSubmit(async (values) => {
     }
     return;
   } else {
-    navigateTo('/');
+    navigateTo('/?welcome=true');
   }
 });
 </script>
