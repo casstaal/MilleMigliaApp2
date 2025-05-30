@@ -170,7 +170,7 @@
     </div>
     <div class="row pt-5 pb-5" style="background-color: #eae7e1;">
             <div class="col-lg-3 col-1"></div>
-            <div class="col-lg-6 col-10 d-flex align-items-center p-3" style="background-color: #003366;">
+            <div class="col-lg-6 col-10 d-flex align-items-center p-3 ms-1" style="background-color: #003366;">
                 <div class="col-6 me-1">
                     <img src="/IMG_5676.jpg" alt="aston martin db2" style="height: auto; width: 100%;">
                 </div>
@@ -189,8 +189,10 @@
     <div class="row mt-5">
         <div class="col-lg-3 col-1"></div>
         <div class="col-lg-6 col-10 mb-5">
-            <h1>Posts</h1>
-            <!-- <NuxtLink to="/blog" class="start-button btn mt-4" style="background-color: #003366; color:white;">Zie alle posts</NuxtLink> -->
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="mb-0">Posts</h1>
+                <NuxtLink to="/blog" class="text-decoration-underline fw-bold" style="color: #003366;">Zie alle posts</NuxtLink>
+            </div>
             <hr />
 
             <div class="position-relative">
@@ -198,7 +200,7 @@
                     <Icon icon="codicon:chevron-left" width="32" />
                 </button>
                 <div ref="postsContainer" class="posts-carousel d-flex flex-nowrap overflow-auto">
-                    <div v-for="post in posts?.slice(0, 10)" :key="post.id" class="col-lg-3 col-10 border card p-3 shadow-sm mb-3 bg-white me-4">
+                    <div v-for="post in posts?.slice(0, 10)" :key="post.id" class="col-lg-4 col-10 border card p-3 shadow-sm mb-3 bg-white me-4">
                         <h3>{{ post.title }}</h3>
                         <div class="d-flex justify-content-between mb-2">
                             <p class="mb-0">Cas Staal</p>
@@ -210,7 +212,7 @@
                         <p v-else>
                             {{ post.description }}
                         </p>
-                        <NuxtLink :to="`/blog?postId=${post.id}`" class="start-button btn mt-4" style="background-color: #003366; color:white; margin-top: auto;">Read more</NuxtLink>
+                        <NuxtLink :to="`/blog?postId=${post.id}`" class="btn mt-auto" style="background-color: #003366; color:white; margin-top: auto;">Read more</NuxtLink>
                     </div>
                 </div>
                 <button class="scroll-button scroll-button-right" @click="scrollPosts('right')">
@@ -220,41 +222,55 @@
         </div>
         <div class="col-lg-3 col-1"></div>
     </div>
-    <div class="row">
-        <div class="col-12">
-            <img src="/seperator2.png" class="w-100">
+    <div class="container-fluid p-0">
+        <div class="row g-0">
+            <div class="col-12">
+                <img src="/seperator2.png" class="w-100 d-block" alt="separator">
+            </div>
         </div>
     </div>
     <div class="pb-4">
         <h1 class="text-center mt-5 mb-5">Keep in touch</h1>
-        <div class="row">
-            <div class="col-3"></div>
-            <div class="col-6">
+        <div class="row ms-1">
+            <div class="col-lg-3 col-1"></div>
+            <div class="col-lg-6 col-10 border" style="background-color: #003366;">
                 <img src="/IMG_24103.jpg" alt="aston martin db2" style="height: auto; width: 100%;">
             </div>
-            <div class="col-3"></div>
+            <div class="col-lg-3 col-1"></div>
         </div>
-        <div class="row mt-5 mb-5">
-            <div class="col-3"></div>
-            <div class="col-3 d-flex justify-content-center align-items-center me-3" style="background-color: #eae7e1;">
+        <div class="row mt-5 mb-5 ms-1">
+            <div class="col-lg-3 col-1"></div>
+            <div class="col-lg-3 col-10 d-flex justify-content-center align-items-center" style="background-color: #eae7e1;">
                 <div class="d-flex flex-column justify-content-center align-items-center text-center p-4" style="background-color: #eae7e1;">
-                    <h4>Contribute to this site</h4>
-                    <p>Sign in with your personal account</p>
-                    <button class="btn w-100 mt-auto" style="background-color: #003366; color:white;">Log in</button>
+                    <div v-if="session">
+                        <h4>U bent ingelogd als {{ loggedInUser.data.value?.role }}.</h4>
+                        <div v-if="loggedInUser.data.value?.role === 'guest'">
+                            <p>U kunt geen dingen toevoegen aan deze site.</p>
+                        </div>
+                        <div v-if="loggedInUser.data.value?.role === 'user'">
+                            <p>U kunt markers en posts toevoegen aan deze site.</p>
+                        </div>
+                        <div v-if="loggedInUser.data.value?.role === 'admin'">
+                            <p>U kunt alles aanpassen en toevoegen op deze site.</p>
+                        </div>
+                        <NuxtLink to="/map" class="start-button btn mt-3" style="background-color: #003366; color:white;">Ga naar kaart</NuxtLink>
+                    </div>
                 </div>
             </div>
-            <div class="col-3 text-center pb-5 ms-3" style="background-color: #ce232a; color: white;">
+            <div class="d-lg-none col-1"></div>
+            <div class="d-lg-none col-1"></div>
+            <div class="col-lg-3 col-10 text-center pb-5 mt-lg-0 mt-5 me-3" style="background-color: #ce232a; color: white;">
                 <h4 class="mt-5">Newsletter</h4>
                 <p>Keep yourself up-to-date with new additions to this site</p>
-                <form style="padding-left: 20%; padding-right: 20%;">
+                <form class="ps-3 pe-3">
                     <div class="row mb-5 mt-5">
                         <div class="col">
                             <label class="form-label">Name</label>
                             <input type="text" class="form-control" />
                         </div>
                         <div class="col">
-                            <label class="form-label">Surname</label>
-                            <input type="text" class="form-control" />
+                            <label class="form-label ms-3">Surname</label>
+                            <input type="text" class="form-control ms-2" />
                         </div>
                     </div>
                     <div class="mb-5">
@@ -269,10 +285,10 @@
                         <input type="checkbox" class="form-check-input" id="privacyPolicy" />
                         <label class="form-check-label" for="privacyPolicy">I have read and accepted the <a href="#" class="text-white text-decoration-underline">privacy policy</a>.</label>
                     </div>
-                    <button type="submit" class="btn w-100" style="background-color: #F2A7A6; color: white;">JOIN ></button>
+                    <button type="submit" class="btn w-50" style="background-color: #F2A7A6; color: white;">JOIN</button>
                 </form>
             </div>
-            <div class="col-3"></div>
+            <div class="col-lg-3 col-1"></div>
         </div>
     </div>
 </template>
