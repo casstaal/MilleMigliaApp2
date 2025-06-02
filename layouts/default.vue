@@ -1,3 +1,31 @@
+<script setup lang="ts">
+  import { onMounted, ref } from 'vue';
+  import { $fetch, FetchError } from 'ofetch';
+
+  const error = ref(false);
+  const errorMessage = ref('');
+
+  onMounted(() => {
+    setInterval(async () => {
+      error.value = false;
+      errorMessage.value = '';
+
+      const response = await $fetch('/api/heartbeat', {
+        method: 'POST',
+      }).catch((e: FetchError) => {
+        errorMessage.value = e?.data?.statusMessage || 'Heartbeat failed';
+        error.value = true;
+      });
+
+      if (error.value || !response) {
+        console.warn('Heartbeat error:', errorMessage.value);
+        return;
+      }
+
+    }, 30000);
+  });
+</script>
+
 <template>
     <div class="page-container">
       <AppHeader />

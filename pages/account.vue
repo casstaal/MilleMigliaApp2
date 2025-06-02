@@ -191,6 +191,23 @@
         }
     }
 
+    function getOnlineStatus(lastSeen: Date): { online: boolean; label: string } {
+        const last = new Date(lastSeen);
+        const now = new Date();
+        const diff = (now.getTime() - last.getTime()) / 1000;
+
+        const online = diff < 60;
+        if (online) return { online, label: 'Online' };
+
+        const minutes = Math.floor(diff / 60);
+        const hours = Math.floor(diff / 3600);
+        const days = Math.floor(diff / 86400);
+
+        if (days > 0) return { online, label: `${days} dagen geleden` };
+        if (hours > 0) return { online, label: `${hours} uur geleden` };
+        return { online, label: `${minutes} minuten geleden` };
+    }
+
     onMounted(() => {
     welcomeMessage.value = getWelcomeMessage()
 
@@ -337,7 +354,7 @@
                                             <p class="me-2 mb-0">Posts: 5</p>
                                         </div>
                                         <div class="col-4 d-flex align-items-center justify-content-end">
-                                            <p class="me-2 mb-0">Laatst online: 5 days ago</p>
+                                            <p class="me-2 mb-0">Laatst online: {{ getOnlineStatus(user.lastSeen).label }}</p>
                                         </div>
                                     </div>
                             </div>
@@ -379,7 +396,7 @@
                                             <p class="me-2 mb-0">Posts: 5</p>
                                         </div>
                                         <div class="col-4 d-flex align-items-center justify-content-end">
-                                            <p class="me-2 mb-0">Laatst online: 5 days ago</p>
+                                            <p class="me-2 mb-0">Laatst online: {{ getOnlineStatus(user.lastSeen).label }}</p>
                                         </div>
                                     </div>
                             </div>
