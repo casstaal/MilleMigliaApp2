@@ -48,18 +48,18 @@
 
     // Watch for changes in postId and scroll
     watch(() => route.query.postId, (newPostId) => {
-    const postId = Array.isArray(newPostId) ? newPostId[0] : newPostId || null
-    selectedPostId.value = postId
-    if (postId) scrollToPost(postId)
+        const postId = Array.isArray(newPostId) ? newPostId[0] : newPostId || null
+        selectedPostId.value = postId
+        if (postId) scrollToPost(postId)
     })
 
     // Scroll to post on page load
     onMounted(() => {
-    const postId = Array.isArray(route.query.postId) ? route.query.postId[0] : route.query.postId || null
-    if (postId) {
-        selectedPostId.value = postId
-        scrollToPost(postId)
-    }
+        const postId = Array.isArray(route.query.postId) ? route.query.postId[0] : route.query.postId || null
+        if (postId) {
+            selectedPostId.value = postId
+            scrollToPost(postId)
+        }
     })
 
     function toggleSelectMode(postId: string) {

@@ -5,8 +5,6 @@
     import type { Marker } from "@prisma/client";
     import { ref } from "vue";
     import { Icon } from "@iconify/vue";
-    // import WalkthroughModal from "./WalkthroughModal.vue";
-    import WalkthroughModal from "~/components/WalkthroughModal.vue";
 
     definePageMeta({
         middleware: 'my-middleware'
@@ -25,12 +23,10 @@
     const handleFileChange = async (event: Event, index: number) => {
         const input = event.target as HTMLInputElement;
         if (!input.files || input.files.length === 0) {
-            // image.value = null;
             return;
         }
 
         const file = input.files[0];
-        // image.value = file;
         await uploadFile(file, index);
     };
 
@@ -61,8 +57,6 @@
     async function deleteFileFromMinIO(index: number) {
         const minioUrl = fileUrls.value[index] ? fileUrls.value[index] : '';
 
-        console.log("URL to delete", minioUrl);
-
         try {
             const response = await fetch(minioUrl, {
                 method: "DELETE"
@@ -73,16 +67,7 @@
                 return;
             }
 
-            // After deleting, remove the file URL and shift images
-            fileUrls.value.splice(index, 1); // Remove the deleted file from the array
-
-            // // Shift all images forward in the array (optional, if you want to make the array contiguous)
-            // for (let i = index; i < fileUrls.value.length; i++) {
-            //     fileUrls.value[i] = fileUrls.value[i + 1] || null; // Shift the image to the previous position
-            // }
-
-            // // Set the last element to null since the last image has been shifted
-            // fileUrls.value[fileUrls.value.length - 1] = null;
+            fileUrls.value.splice(index, 1); 
 
             // Update the selection state
             if (index == 0) {
@@ -95,10 +80,6 @@
                 fourthImageSelected.value = false;
             }
 
-            console.log("first image value", fileUrls.value[0])
-            console.log("second image value", fileUrls.value[1])
-            console.log("third image value", fileUrls.value[2])
-            console.log("fourth image value", fileUrls.value[3])
         } catch (error) {
             console.error("Delete error:", error);
             return;
@@ -151,8 +132,6 @@
         showModal.value = true;
     }
 
-
-
     const lat = typeof route.query.lat === 'string' ? route.query.lat : null;
     const lng = typeof route.query.lng === 'string' ? route.query.lng : null;
 
@@ -190,12 +169,6 @@
         values.images[1] = fileUrls.value[1] ? fileUrls.value[1] : '';
         values.images[2] = fileUrls.value[2] ? fileUrls.value[2] : '';
         values.images[3] = fileUrls.value[3] ? fileUrls.value[3] : '';
-
-
-        // const imgUrl = await uploadFile(values.image);
-        // delete values.image;
-
-        // values.imgUrl = imgUrl;
 
         const response = await $fetch<Marker>("/api/markers", { method: "post", body: values }).catch((e: FetchError) => {
             errorMessage.value = e.data.message;

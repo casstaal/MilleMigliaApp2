@@ -27,12 +27,11 @@ const expandedBrand = ref<string | null>(null);
 
 function toggleBrand(brand: string) {
   if (expandedBrand.value === brand) {
-    expandedBrand.value = null;  // Collapse if already open
+    expandedBrand.value = null;
   } else {
-    expandedBrand.value = brand; // Expand the clicked brand
+    expandedBrand.value = brand;
   }
 }
-
 
 const uniqueYears = computed(() => {
   if (!markers.value) return [];
@@ -170,7 +169,6 @@ onMounted(async () => {
                 class="sub-menu2 dropstart"
               >
                 <div style="display: flex; align-items: center; justify-content: space-between;">
-                  <!-- Checkbox to select brand -->
                   <label style="flex-grow: 1;">
                     <input
                       type="checkbox"
@@ -179,14 +177,10 @@ onMounted(async () => {
                     />
                     {{ brand }}
                   </label>
-
-                  <!-- Button/icon to expand models -->
                   <button @click="toggleBrand(brand)" style="background: none; border: none; cursor: pointer;">
                     {{ expandedBrand === brand ? '▲' : '▼' }}
                   </button>
                 </div>
-
-                <!-- Show models only if this brand is expanded -->
                 <ul v-if="expandedBrand === brand" class="dropdown-menu our-pick-menu">
                   <li 
                     v-for="model in uniqueModels(brand)" 

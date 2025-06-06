@@ -44,9 +44,6 @@
     }
 
     const firstImage = ref(marker?.value?.images[0]);
-    // const secondImage = ref(marker?.value?.imgUrl2);
-    // const thirdImage = ref(marker?.value?.imgUrl3);
-    // const fourthImage = ref(marker?.value?.imgUrl4);
 
     const firstImageSelected = ref(true);
     const secondImageSelected = ref(false);
@@ -140,12 +137,10 @@
     const handleFileChange = async (event: Event, index: number) => {
         const input = event.target as HTMLInputElement;
         if (!input.files || input.files.length === 0) {
-            // image.value = null;
             return;
         }
 
         const file = input.files[0];
-        // image.value = file;
         await uploadFile(file, index);
     };
 
@@ -194,8 +189,6 @@
         }
 
         window.location.reload();
-        // navigateTo(`/map`);
-        // navigateTo(`/markers/${markerId}`);
     }
 
     async function deleteMarker() {
@@ -243,37 +236,6 @@
             console.error('Share failed:', err);
         }
     }
-
-// async function shareMarker() {
-//     const imageUrl = marker?.value?.images?.[0];
-    
-//     if (!imageUrl) {
-//         console.warn('No image URL available to share.');
-//         return;
-//     }
-
-//     try {
-//         const response = await fetch(imageUrl);
-//         const blob = await response.blob();
-//         const file = new File([blob], 'marker-image.jpg', { type: blob.type });
-
-//         const shareData: ShareData = {
-//             title: 'Check out this marker!',
-//             text: 'Here is a cool marker I found:',
-//             url: `${window.location.origin}/marker/${marker?.value?.id}`,
-//             files: [file]
-//         };
-
-//         if (navigator.canShare?.({ files: [file] })) {
-//             await navigator.share(shareData);
-//             console.log('Shared successfully');
-//         } else {
-//             console.warn('Sharing files not supported on this device.');
-//         }
-//     } catch (err) {
-//         console.error('Share failed:', err);
-//     }
-// }
 
     const isPopupVisible = ref(false);  
 

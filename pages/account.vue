@@ -16,9 +16,6 @@
 
     const session = await getSession();
 
-    const route = useRoute();
-    const router = useRouter();
-
     const loggedInUser = await useFetch<User>(`/api/users/${session?.user?.userId}`)
 
     const users = ref<User[] | null>(null);
@@ -69,17 +66,6 @@
         })
     )
 
-    const resetPasswordSchema = toTypedSchema(
-        object({
-            currentPassword: string().min(1, { message: "Huidig wachtwoord is verplicht" }),
-            newPassword: string().min(1, { message: "Nieuw wachtwoord is verplicht" }),
-            newPassword2: string().min(1, { message: "Herhaal wachtwoord is verplicht" })
-        }).refine(data => data.newPassword === data.newPassword2, {
-            message: "Wachtwoorden komen niet overeen",
-            path: ["newPassword2"]
-        })
-    );
-
     const { handleSubmit: handleAddUserSubmit, errors: addUserErrors } = useForm({
         validationSchema: userSchema,
     });
@@ -91,18 +77,6 @@
 
     const onSubmit = handleAddUserSubmit(async (values) => {
         createUser(values);
-    })
-
-    const { handleSubmit: handleResetPasswordSubmit, errors: resetPasswordErrors } = useForm({
-        validationSchema: resetPasswordSchema,
-    })
-
-    const { value: currentPassword } = useField("currentPassword");
-    const { value: newPassword } = useField("newPassword");
-    const { value: newPassword2 } = useField("newPassword2");
-
-    const onUpdateSubmit = handleResetPasswordSubmit(async (values) => {
-        updatePassword(values);
     })
 
     async function createUser(values: any) {
@@ -123,6 +97,29 @@
 
         window.location.reload();
     }
+
+    const resetPasswordSchema = toTypedSchema(
+        object({
+            currentPassword: string().min(1, { message: "Huidig wachtwoord is verplicht" }),
+            newPassword: string().min(1, { message: "Nieuw wachtwoord is verplicht" }),
+            newPassword2: string().min(1, { message: "Herhaal wachtwoord is verplicht" })
+        }).refine(data => data.newPassword === data.newPassword2, {
+            message: "Wachtwoorden komen niet overeen",
+            path: ["newPassword2"]
+        })
+    );
+
+    const { handleSubmit: handleResetPasswordSubmit, errors: resetPasswordErrors } = useForm({
+        validationSchema: resetPasswordSchema,
+    })
+
+    const { value: currentPassword } = useField("currentPassword");
+    const { value: newPassword } = useField("newPassword");
+    const { value: newPassword2 } = useField("newPassword2");
+
+    const onUpdateSubmit = handleResetPasswordSubmit(async (values) => {
+        updatePassword(values);
+    })
 
     async function updatePassword(values: any) {
         const response = await $fetch<User>(`/api/users/${session?.user?.userId}`, { method: "put", body: values }).catch((e: FetchError) => {
