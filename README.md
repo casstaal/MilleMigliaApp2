@@ -1,75 +1,111 @@
-# Nuxt Minimal Starter
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+# Mille Miglia
 
-## Setup
+Mille Miglia is a web application developed using Nuxt 3, Vue 3, and TypeScript. The application allows users to explore and manage Mille Miglia images on an interactive map.
 
-Make sure to install dependencies:
+The project was developed to gain experience with full-stack web development, including frontend development, API endpoints, database management, and external services such as MinIO for image storage.
 
-```bash
-# npm
+## Features
+
+- **Interactive map:** Displays car-related locations using Leaflet and OpenStreetMap.
+- **Map markers:** Users can add, view, edit, and delete markers containing information about cars and their locations.
+- **Image uploads:** Users can upload images associated with markers, which are stored using MinIO.
+- **Image gallery:** Multiple images can be associated with a marker and displayed in a gallery.
+- **User authentication:** Authentication and user sessions are handled using Nuxt Auth.
+- **Form validation:** Forms are validated using VeeValidate.
+
+## Technologies
+
+| Category | Technologies |
+|---|---|
+| Frontend | Vue 3, Nuxt 3, TypeScript |
+| Styling | Bootstrap |
+| Maps | Leaflet, OpenStreetMap |
+| Backend | Nuxt Server API Routes |
+| Database | PostgreSQL, Prisma |
+| Object Storage | MinIO |
+| Authentication | Nuxt Auth |
+| Validation | VeeValidate |
+
+## Architecture
+
+The application uses Nuxt 3 for both frontend and backend functionality.
+
+- **Frontend:** Vue components provide the user interface and interactive map functionality.
+- **Backend:** Nuxt server API routes handle requests related to markers, images, and application data.
+- **Database:** PostgreSQL stores application data, accessed through Prisma ORM.
+- **Object Storage:** MinIO is used to store images uploaded by users.
+- **Maps:** Leaflet and OpenStreetMap provide interactive map functionality and location markers.
+
+## Installation
+
+### Prerequisites
+
+- Node.js
+- npm
+- PostgreSQL
+- MinIO (or a compatible object storage service)
+
+### 1. Clone the repository
+
+```powershell
+git clone <repository-url>
+cd <repository-folder>
+```
+
+### 2. Install dependencies
+
+```powershell
 npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
 ```
 
-## Development Server
+### 3. Configure environment variables
 
-Start the development server on `http://localhost:3000`:
+The application requires configuration for its database, authentication, and object storage.
 
-```bash
-# npm
+Create a `.env` file and configure the required environment variables according to the project's configuration.
+
+### 4. Set up the database
+
+Configure PostgreSQL and apply the existing Prisma database migrations.
+
+### 5. Start the development server
+
+```powershell
 npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
-## Production
+The application should be available at:
 
-Build the application for production:
+http://localhost:3000
 
-```bash
-# npm
-npm run build
+> **Note:** The installation steps describe the intended development setup. They have not been recently verified, and additional configuration or dependency updates may be required.
 
-# pnpm
-pnpm build
+## Project Status
 
-# yarn
-yarn build
+This is an older educational project that is no longer actively maintained.
 
-# bun
-bun run build
-```
+The application previously ran on a personal server, but it has not been tested with the latest versions of its dependencies or services.
 
-Locally preview production build:
+In particular, the project relies on a MinIO-based object storage setup that has not been updated or verified recently. Changes in dependencies, service availability, or configuration may affect the application's ability to run without modifications.
 
-```bash
-# npm
-npm run preview
+The repository is primarily shared as a portfolio project to demonstrate experience with Vue, Nuxt, TypeScript, full-stack development, database integration, and interactive maps.
 
-# pnpm
-pnpm preview
+## Possible Improvements
 
-# yarn
-yarn preview
+If development were resumed, possible improvements would include:
 
-# bun
-bun run preview
-```
+- Updating dependencies and checking compatibility with current versions.
+- Reviewing the MinIO integration and object storage configuration.
+- Improving error handling and validation.
+- Adding automated tests.
+- Reviewing authentication and security configurations.
+- Improving documentation and deployment configuration.
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+## Project Context
+
+Mille Miglia was developed as a learning project to explore full-stack development using Nuxt 3 and Vue 3.
+
+It demonstrates practical experience with interactive maps, API development, database operations, authentication, and image storage.
+
+Although the application is no longer actively maintained, the source code remains available as an example of my earlier development work.
